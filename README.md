@@ -20,7 +20,25 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Here's an overview all the supporting features.
+
+### NxtSupport::Models
+
+Enjoy support for your models.
+
+#### NxtSupport::Models::SafelyFindOrCreateable
+
+The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
+
+The `safely_find_or_create_by` method provided by this concern catches such an error and performs `find_by` another time. It also offers a bang variant.
+
+```ruby
+class Book < ApplicationRecord
+	include NxtSupport::Models::SafelyFindOrCreateable
+end
+
+Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
+```
 
 ## Development
 
