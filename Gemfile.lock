@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     nxt_support (0.1.0)
-      activesupport
       rails
 
 GEM
