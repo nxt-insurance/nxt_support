@@ -1,5 +1,11 @@
 require "bundler/setup"
 require "nxt_support"
+require 'active_record'
+
+ActiveRecord::Base.establish_connection(
+  :adapter => 'sqlite3',
+  :database => ':memory:'
+)
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
