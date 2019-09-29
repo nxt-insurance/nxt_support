@@ -1,8 +1,6 @@
 # NxtSupport
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/nxt_support`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This is a collection of mixins, helpers and classes that cover several aspects of a ruby on rails application, such as models, controllers and job processing. At [Getsafe](https://hellogetsafe.com), we run multiple Ruby on Rails app as part of our insurance backed infrastructure and we found that we wrote quite some shared helpers that are duplicated among applications and serve a generic purpose that we could share in this gem. Look at it as our version of ActiveSupport (which is amazing! ❤️), droping in the puzzle pieces we sometimes miss in Rails.
 
 ## Installation
 
@@ -32,7 +30,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/nxt_support.
+Bug reports and pull requests are welcome on GitHub at https://github.com/nxt_insurance/nxt_support.
 
 ## License
 
