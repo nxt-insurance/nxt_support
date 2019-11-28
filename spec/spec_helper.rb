@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "pry"
 require "nxt_support"
 require 'active_record'
 
