@@ -24,11 +24,11 @@ Or install it yourself as:
 
 Here's an overview all the supporting features.
 
-### NxtSupport::Models
+### NxtSupport/Models
 
 Enjoy support for your models.
 
-#### NxtSupport::Models::SafelyFindOrCreateable
+#### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
 
@@ -36,10 +36,33 @@ The `safely_find_or_create_by` method provided by this concern catches such an e
 
 ```ruby
 class Book < ApplicationRecord
-	include NxtSupport::Models::SafelyFindOrCreateable
+	include NxtSupport::SafelyFindOrCreateable
 end
 
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
+```
+
+### NxtSupport/Util
+
+Enjoy some useful utilities
+
+#### NxtSupport::EnumHash
+
+`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
+Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is 
+no value for the key. 
+
+```ruby
+class Book
+  STATES = NxtSupport::EnumHash['draft', 'revised', 'Published', 'in weird State']
+end
+
+Book::STATES[:draft] # 'draft'
+Book::STATES['revised'] # 'revised'
+Book::STATES['published'] # 'Published'
+Book::STATES['Published'] # KeyError
+Book::STATES['in_weird_state'] # 'in weird State'
+
 ```
 
 ## Development
