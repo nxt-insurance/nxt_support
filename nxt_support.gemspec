@@ -5,8 +5,8 @@ require "nxt_support/version"
 Gem::Specification.new do |spec|
   spec.name          = "nxt_support"
   spec.version       = NxtSupport::VERSION
-  spec.authors       = ["Nils Sommer"]
-  spec.email         = ["mail@nilssommer.de"]
+  spec.authors       = ["Nils Sommer", "Andreas Robecke"]
+  spec.email         = ["mail@nilssommer.de", "a.robecke@getsafe.de"]
 
   spec.summary       = "Support through reusable Mixins and Helpers for Ruby on Rails Applications"
   spec.homepage      = "https://github.com/nxt-insurance/nxt_support"
@@ -15,8 +15,8 @@ Gem::Specification.new do |spec|
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/nxt-insurance/nxt_init"
-  spec.metadata["changelog_uri"] = "https://github.com/nxt-insurance/nxt_init/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/nxt-insurance/nxt_support"
+  spec.metadata["changelog_uri"] = "https://github.com/nxt-insurance/nxt_support/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
