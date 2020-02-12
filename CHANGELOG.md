@@ -1,8 +1,8 @@
-# Unreleased
+# v0.1.2 2020-02-12
 
 - Added `NxtSupport::Email`.
 
-# v0.1.1 2019-02-04
+# v0.1.1 2020-02-04
 
 ### Added
 
