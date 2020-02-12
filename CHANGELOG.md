@@ -1,6 +1,6 @@
 # Unreleased
 
-Todo
+- Added `NxtSupport::Email`.
 
 # v0.1.1 2019-02-04
 
