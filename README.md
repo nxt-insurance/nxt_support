@@ -28,6 +28,10 @@ Here's an overview all the supporting features.
 
 Enjoy support for your models.
 
+#### NxtSupport::Email
+
+This class collects useful tools around working with email addresses. Use `NxtSupport::Email::REGEXP` to match email address strings. See the sources for a list of criteria it validates.
+
 #### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
