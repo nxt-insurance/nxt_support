@@ -2,6 +2,7 @@ require "bundler/setup"
 require "pry"
 require "nxt_support"
 require 'active_record'
+require "active_support/testing/time_helpers"
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',
@@ -32,3 +33,5 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 end
+
+Dir[File.join(Pathname.new(__FILE__).dirname, 'support', '**', '*.rb')].each { |f| require f }

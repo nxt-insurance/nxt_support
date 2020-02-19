@@ -1,3 +1,8 @@
+# v0.1.3 2020-02-19
+
+- Added `NxtSupport::IndifferentlyAccessibleJsonAttrs`
+- Added `NxtSupport::HasTimeAttributes`.
+
 # v0.1.2 2020-02-12
 
 - Added `NxtSupport::Email`.

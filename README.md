@@ -32,6 +32,18 @@ Enjoy support for your models.
 
 This class collects useful tools around working with email addresses. Use `NxtSupport::Email::REGEXP` to match email address strings. See the sources for a list of criteria it validates.
 
+#### NxtSupport::IndifferentlyAccessibleJsonAttrs
+
+This mixin provides the `indifferently_accessible_json_attrs` class method which serializes and deserializes JSON database columns with `ActiveSupport::HashWithIndifferentAccess` instead of `Hash`.
+
+```ruby
+class MyModel < ApplicationRecord
+  include IndifferentlyAccessibleJsonAttrs
+  
+  indifferently_accessible_json_attrs :data
+end
+```
+
 #### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
@@ -44,6 +56,22 @@ class Book < ApplicationRecord
 end
 
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
+```
+
+### NxtSupport/Serializers
+
+Enjoy mixins for your serializers.
+
+#### NxtSupport::HasTimeAttributes
+
+This mixin provides your serializer classes with a `attribute_as_iso8601` and a `attributes_as_iso8601` method. They behave almost the same as the `attribute` method of [active_model_serializers](https://github.com/rails-api/active_model_serializers) (in fact they call it behind the scenes), but they convert the values of the given attributes to an ISO8601 string. This is useful for `Date`, `Time` or `ActiveSupport::Duration` values.
+
+```ruby
+class MySerializer < ActiveModel::Serializer
+  include NxtSupport::HasTimeAttributes
+  
+  attributes_as_iso8601 :created_at, :updated_at
+end
 ```
 
 ### NxtSupport/Util
