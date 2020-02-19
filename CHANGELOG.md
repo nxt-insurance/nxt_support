@@ -1,3 +1,7 @@
+# v0.1.3 UNRELEASED
+
+- Added `NxtSupport::HasTimeAttributes`.
+
 # v0.1.2 2020-02-12
 
 - Added `NxtSupport::Email`.
