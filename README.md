@@ -46,6 +46,22 @@ end
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
 ```
 
+### NxtSupport/Serializers
+
+Enjoy mixins for your serializers.
+
+#### NxtSupport::HasTimeAttributes
+
+This mixin provides your serializer classes with a `attribute_as_iso8601` and a `attributes_as_iso8601` method. They behave almost the same as the `attribute` method of [active_model_serializers](https://github.com/rails-api/active_model_serializers) (in fact they call it behind the scenes), but they convert the values of the given attributes to an ISO8601 string. This is useful for `Date`, `Time` or `ActiveSupport::Duration` values.
+
+```ruby
+class MySerializer < ActiveModel::Serializer
+  include NxtSupport::HasTimeAttributes
+  
+  attributes_as_iso8601 :created_at, :updated_at
+end
+```
+
 ### NxtSupport/Util
 
 Enjoy some useful utilities
