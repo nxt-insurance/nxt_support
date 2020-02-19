@@ -32,6 +32,18 @@ Enjoy support for your models.
 
 This class collects useful tools around working with email addresses. Use `NxtSupport::Email::REGEXP` to match email address strings. See the sources for a list of criteria it validates.
 
+#### NxtSupport::IndifferentlyAccessibleJsonAttrs
+
+This mixin provides the `indifferently_accessible_json_attrs` class method which serializes and deserializes JSON database columns with `ActiveSupport::HashWithIndifferentAccess` instead of `Hash`.
+
+```ruby
+class MyModel < ApplicationRecord
+  include IndifferentlyAccessibleJsonAttrs
+  
+  indifferently_accessible_json_attrs :data
+end
+```
+
 #### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
