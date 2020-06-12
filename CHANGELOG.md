@@ -1,3 +1,7 @@
+# v0.1.4 2020-06-12
+
+- Added `NxtSupport::AssignableValues`
+
 # v0.1.3 2020-02-19
 
 - Added `NxtSupport::IndifferentlyAccessibleJsonAttrs`
