@@ -45,6 +45,8 @@ module NxtSupport
 
       def set_default_assignable
         self.class.assignable_values.each do |column, assignable|
+          next unless new_record? && send(column).nil?
+
           if assignable[:default]
             send("#{column}=", assignable[:default])
           end

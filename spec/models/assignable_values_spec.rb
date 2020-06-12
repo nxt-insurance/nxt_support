@@ -286,11 +286,36 @@ RSpec.describe NxtSupport::AssignableValues do
     end
 
     context 'with a valid default value' do
-      let(:movie) { valid_default_class.new }
-      it 'assigns the default value and saves successfully' do
-        expect(movie.genre).to eq(valid_default_class.assignable_values[:genre][:default])
-        expect(movie.save).to be(true)
-        expect(movie.reload.genre).to eq(valid_default_class.assignable_values[:genre][:default])
+      context 'when the record is new and no value is given' do
+        let(:movie) { valid_default_class.new }
+        it 'assigns the default value and saves successfully' do
+          expect(movie.genre).to eq(valid_default_class.assignable_values[:genre][:default])
+          expect(movie.save).to be(true)
+          expect(movie.reload.genre).to eq(valid_default_class.assignable_values[:genre][:default])
+        end
+      end
+
+      context 'when the record is new and a genre is given' do
+        let(:movie) { valid_default_class.new(genre: 'action') }
+        it 'does not assign the default value' do
+          expect(movie.genre).to_not eq(valid_default_class.assignable_values[:genre][:default])
+          expect(movie.save).to be(true)
+          expect(movie.reload.genre).to eq('action')
+        end
+      end
+
+      context 'when a saved record is initialized with a genre' do
+        let(:movie) { valid_default_class.create(genre: 'action') }
+        it 'does not assign the default value' do
+          expect(valid_default_class.find(movie.id).genre).to_not eq(valid_default_class.assignable_values[:genre][:default])
+        end
+      end
+
+      context 'when a record is created without a genre' do
+        let(:movie) { valid_default_class.create() }
+        it 'assigns the default value to genre' do
+          expect(valid_default_class.find(movie.id).genre).to eq(valid_default_class.assignable_values[:genre][:default])
+        end
       end
     end
 
