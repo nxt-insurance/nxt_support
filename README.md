@@ -39,7 +39,7 @@ This mixin provides the `indifferently_accessible_json_attrs` class method which
 ```ruby
 class MyModel < ApplicationRecord
   include IndifferentlyAccessibleJsonAttrs
-  
+
   indifferently_accessible_json_attrs :data
 end
 ```
@@ -58,6 +58,43 @@ end
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
 ```
 
+#### NxtSupport::AssignableValues
+
+The `NxtSupport::AssignableValues` allows you to restrict the possible values for your ActiveRecord model attributes. These values will only be checked on new records or if the attribute in question has been changed, so existing records will not be affected even if they contain invalid values.
+
+```ruby
+class Book < ApplicationRecord
+	include NxtSupport::AssignableValues
+
+  assignable_values_for :genre do
+    %w[fantasy adventure crime historical]
+  end
+end
+
+book = Book.new(genre: 'fantasy', title: 'Moche!')
+book.valid? #=> true
+
+book.genre = 'comedy'
+book.valid? #=> false
+
+book.valid_genres #=> ["fantasy", "adventure", "crime", "historical"]
+```
+
+A default can be included
+```ruby
+class Book < ApplicationRecord
+	include NxtSupport::AssignableValues
+
+  assignable_values_for :genre, default: 'crime' do
+    %w[fantasy adventure crime historical]
+  end
+end
+
+book = Book.new(title: 'Moche!')
+book.genre #=> crime
+```
+If the default value is not in the list of assignable values, then validation will fail. 
+
 ### NxtSupport/Serializers
 
 Enjoy mixins for your serializers.
@@ -69,7 +106,7 @@ This mixin provides your serializer classes with a `attribute_as_iso8601` and a 
 ```ruby
 class MySerializer < ActiveModel::Serializer
   include NxtSupport::HasTimeAttributes
-  
+
   attributes_as_iso8601 :created_at, :updated_at
 end
 ```
@@ -80,9 +117,9 @@ Enjoy some useful utilities
 
 #### NxtSupport::EnumHash
 
-`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
-Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is 
-no value for the key. 
+`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums.
+Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is
+no value for the key.
 
 ```ruby
 class Book
