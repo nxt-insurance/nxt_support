@@ -1,5 +1,22 @@
 RSpec.describe NxtSupport::AssignableValues do
-  describe 'A class with one column with assignable_values' do
+  let!(:db_schema) do
+    ActiveRecord::Schema.define do
+      self.verbose = false
+
+      create_table :movies, :force => true do |t|
+        t.string :genre
+        t.string :director
+        t.string :title
+      end
+
+      create_table :careers, :force => true do |t|
+        t.string :name
+        t.string :industry
+      end
+    end
+  end
+
+  describe 'A class with assignable_values' do
     subject do
       Class.new(ActiveRecord::Base) do
         self.table_name = 'movies'
@@ -7,18 +24,6 @@ RSpec.describe NxtSupport::AssignableValues do
 
         assignable_values_for :genre do
           %w[action adventure comedy romance]
-        end
-      end
-    end
-
-    let!(:db_schema) do
-      ActiveRecord::Schema.define do
-        self.verbose = false
-
-        create_table :movies, :force => true do |t|
-          t.string :genre
-          t.string :director
-          t.string :title
         end
       end
     end
@@ -45,16 +50,16 @@ RSpec.describe NxtSupport::AssignableValues do
 
       it 'fails validation' do
         expect(movie.valid?).to be_falsey
-        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values')
+        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values.')
       end
     end
 
     context 'when a record is initialized with no value' do
       let(:movie) { subject.new }
 
-      it 'passes validation' do
-        expect(movie.valid?).to be(true)
-        expect(movie.errors).to be_empty
+      it 'fails validation' do
+        expect(movie.valid?).to be(false)
+        expect(movie.errors[:genre].first).to eq('can\'t be blank.')
       end
     end
 
@@ -80,11 +85,11 @@ RSpec.describe NxtSupport::AssignableValues do
 
       it 'fails validation' do
         expect(movie.valid?).to be_falsey
-        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values')
+        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values.')
       end
     end
 
-    context 'when a record that already contains an invalid value is updated' do
+    context 'when a record that already contains an invalid value is saved without changes' do
       let(:movie) { subject.create(genre: subject.assignable_values[:genre][:values].first) }
 
       before do
@@ -96,6 +101,47 @@ RSpec.describe NxtSupport::AssignableValues do
         expect(movie.valid?).to be(true)
         expect(movie.errors).to be_empty
         expect(movie.save!).to be(true)
+      end
+    end
+
+    context 'when a record that already contains an invalid value is updated with a different invalid value' do
+      let(:movie) { subject.create(genre: subject.assignable_values[:genre][:values].first) }
+
+      before do
+        movie.update_column(:genre, 'country')
+        movie.genre = 'rock'
+      end
+
+      it 'fails validation' do
+        expect(movie.valid_genres).not_to include(movie.genre)
+        expect(movie.valid?).to be(false)
+        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values.')
+      end
+    end
+
+    context 'when a record that already contains a valid value is updated with an invalid value' do
+      let(:movie) { subject.create(genre: subject.assignable_values[:genre][:values].first) }
+
+      before do
+        movie.genre = 'rock'
+      end
+
+      it 'fails validation' do
+        expect(movie.valid?).to be(false)
+        expect(movie.errors[:genre].first).to eq('the value rock is not in the list of acceptable values.')
+      end
+    end
+
+    context 'when a record that already contains a valid value is updated with a blank value' do
+      let(:movie) { subject.create(genre: subject.assignable_values[:genre][:values].first) }
+
+      before do
+        movie.genre = nil
+      end
+
+      it 'fails validation' do
+        expect(movie.valid?).to be(false)
+        expect(movie.errors[:genre].first).to eq('can\'t be blank.')
       end
     end
   end
@@ -110,21 +156,7 @@ RSpec.describe NxtSupport::AssignableValues do
           %w[action adventure comedy romance]
         end
 
-        assignable_values_for :director do
-          %w[andy nils anthony scott]
-        end
-      end
-    end
-
-    let!(:db_schema) do
-      ActiveRecord::Schema.define do
-        self.verbose = false
-
-        create_table :movies, :force => true do |t|
-          t.string :genre
-          t.string :director
-          t.string :title
-        end
+        assignable_values_for :director, %w[andy nils anthony scott]
       end
     end
 
@@ -142,7 +174,7 @@ RSpec.describe NxtSupport::AssignableValues do
 
       it 'is not valid' do
         expect(movie.valid?).to be_falsey
-        expect(movie.errors[:director].first).to eq('the value john is not in the list of acceptable values')
+        expect(movie.errors[:director].first).to eq('the value john is not in the list of acceptable values.')
       end
     end
   end
@@ -174,72 +206,32 @@ RSpec.describe NxtSupport::AssignableValues do
       end
     end
 
-    let!(:db_schema) do
-      ActiveRecord::Schema.define do
-        self.verbose = false
-
-        create_table :movies, :force => true do |t|
-          t.string :genre
-          t.string :director
-          t.string :title
-        end
-
-        create_table :careers, :force => true do |t|
-          t.string :name
-          t.string :industry
-        end
-      end
+    it 'has the correct configuration for each class' do
+      expect(movie_class.assignable_values[:genre]).to eq(
+        {
+          values: %w[action adventure comedy romance],
+          allow_blank: nil,
+          default: nil
+        }
+      )
+      expect(career_class.assignable_values).to eq(
+        {
+          industry: {
+            values: %w[tech agriculture media],
+            allow_blank: nil,
+            default: nil
+          }
+        }
+      )
     end
 
-    context 'when both records are initialized with a valid value' do
+    context 'when records are initialized from both classes' do
       let(:movie) { movie_class.new(genre: 'action', director: 'anthony') }
       let(:career) { career_class.new(industry: 'tech') }
 
-      it 'is valid' do
-        expect(movie.valid?).to be(true)
-        expect(movie.errors).to be_empty
-
-        expect(career.valid?).to be(true)
-        expect(career.errors).to be_empty
-      end
-    end
-
-    context 'when a record is initialized with an invalid value and a valid value' do
-      let(:movie) { movie_class.new(genre: 'action', director: 'john') }
-      let(:career) { career_class.new(industry: 'action') }
-
-      it 'fails validation' do
-        expect(movie.valid?).to be_falsey
-        expect(movie.errors[:director].first).to eq('the value john is not in the list of acceptable values')
-
-        expect(career.valid?).to be_falsey
-        expect(career.errors[:industry].first).to eq('the value action is not in the list of acceptable values')
-      end
-    end
-
-    context 'when both records already exist with invalid values' do
-      let!(:movie) do
-        movie = movie_class.new(genre: 'blue', director: 'poodles')
-        movie.save(validate: false)
-        movie
-      end
-      let!(:career) do
-        career = career_class.new(industry: 'fake')
-        career.save(validate: false)
-        career
-      end
-
-      before do
-        movie.title = 'Title'
-        career.name = 'Software Developer'
-      end
-
-      it 'passes validation and saves' do
-        expect(movie.valid?).to be(true)
-        expect(movie.save).to be(true)
-
-        expect(career.valid?).to be(true)
-        expect(career.save).to be(true)
+      it 'has the correct list of valid values' do
+        expect(movie.valid_genres).to eq(%w[action adventure comedy romance])
+        expect(career.valid_industries).to eq(%w[tech agriculture media])
       end
     end
   end
@@ -256,6 +248,10 @@ RSpec.describe NxtSupport::AssignableValues do
         assignable_values_for :genre, default: 'comedy' do
           %w[action adventure comedy romance]
         end
+
+        assignable_values_for :director, default: proc { genre == 'action' ? 'andy' : 'nils' } do
+          %w[andy nils anthony scott]
+        end
       end
     end
 
@@ -269,18 +265,6 @@ RSpec.describe NxtSupport::AssignableValues do
 
         assignable_values_for :genre, default: 'rap' do
           %w[action adventure comedy romance]
-        end
-      end
-    end
-
-    let!(:db_schema) do
-      ActiveRecord::Schema.define do
-        self.verbose = false
-
-        create_table :movies, :force => true do |t|
-          t.string :genre
-          t.string :director
-          t.string :title
         end
       end
     end
@@ -324,6 +308,47 @@ RSpec.describe NxtSupport::AssignableValues do
       it 'assigns the default value and saves unsuccessfully' do
         expect(movie.genre).to eq(invalid_default_class.assignable_values[:genre][:default])
         expect(movie.save).to be(false)
+      end
+    end
+
+    context 'with a proc' do
+      let(:movie) { valid_default_class.new(genre: 'action') }
+      it 'evaluates the proc and assigns the default value' do
+        expect(movie.director).to eq('andy')
+      end
+    end
+  end
+
+  describe 'A class that allows blank values' do
+    let!(:allow_blank_class) do
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'movies'
+        def self.name
+          'Movie'
+        end
+        include NxtSupport::AssignableValues
+
+        assignable_values_for :genre, allow_blank: true do
+          %w[action adventure comedy romance]
+        end
+      end
+    end
+
+    context 'when a record is initialized with no value' do
+      let(:movie) { allow_blank_class.new }
+
+      it 'passes validation' do
+        expect(movie.valid?).to be(true)
+        expect(movie.errors).to be_empty
+      end
+    end
+
+    context 'when a record exists and the value is changed to nil' do
+      let(:movie) { allow_blank_class.create(genre: 'action') }
+
+      it 'passes validation' do
+        movie.genre = nil
+        expect(movie.valid?).to be(true)
       end
     end
   end

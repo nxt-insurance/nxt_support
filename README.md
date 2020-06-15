@@ -66,9 +66,13 @@ The `NxtSupport::AssignableValues` allows you to restrict the possible values fo
 class Book < ApplicationRecord
 	include NxtSupport::AssignableValues
 
+  # You can use a block
   assignable_values_for :genre do
     %w[fantasy adventure crime historical]
   end
+
+  # Or you can also use an array argument
+  assignable_values_for :genre, %w[fantasy adventure crime historical]
 end
 
 book = Book.new(genre: 'fantasy', title: 'Moche!')
@@ -82,18 +86,15 @@ book.valid_genres #=> ["fantasy", "adventure", "crime", "historical"]
 
 A default can be included
 ```ruby
-class Book < ApplicationRecord
-	include NxtSupport::AssignableValues
-
-  assignable_values_for :genre, default: 'crime' do
-    %w[fantasy adventure crime historical]
-  end
+assignable_values_for :genre, default: 'crime' do
+  %w[fantasy adventure crime historical]
 end
-
+```
+```ruby
 book = Book.new(title: 'Moche!')
 book.genre #=> crime
 ```
-If the default value is not in the list of assignable values, then validation will fail. 
+If the default value is not in the list of assignable values, then validation will fail.
 
 ### NxtSupport/Serializers
 
