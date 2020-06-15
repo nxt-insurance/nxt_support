@@ -82,7 +82,7 @@ Enjoy some useful utilities
 
 `NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
 Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is 
-no value for the key. 
+no value for the key. It is close enough to flat `NxtRegistry`, but more lightweight. 
 
 ```ruby
 class Book
@@ -95,6 +95,58 @@ Book::STATES['published'] # 'Published'
 Book::STATES['Published'] # KeyError
 Book::STATES['in_weird_state'] # 'in weird State'
 
+```
+
+#### NxtSupport::HashTranslator
+
+`NxtSupport::HashTranslator` is a module that allows you to manipulate keys and values of original hash through tuple hash. 
+Tuple hash is a hash where `key` - represent's the key of original hash, and `value` - represents the key of result hash.
+Use `#translate_hash` method to get the result hash.
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+
+TestClass.translate_hash(firstname: 'John', firstname: :first_name)
+=> { 'first_name' => 'John' }
+```
+The `value` also could be a `Hash`. If this hash contain only 1 pair `key` would be used as a new `key`
+and `value` would be used as it is unless it responds to `#call`. In this cases `#call` would be called and actual value
+passed to the block called (if no, original value would be left). In case there is more than 1 pair first `key` would
+be used and last `value` would be used as well. 
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+# Multiple pair hash used as hash value
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = { firstname: :first_name, phonenumber: { phone_number: ->(number) { number.to_s.prepent('+49') }, telephone: :phone_num  } }
+
+TestClass.translate_hash(hash, tuple)
+=> { 'first_name' => 'John', 'phone_number' => '11-22-33-445' }
+
+# Lambda used as hash value
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = { firstname: :first_name, phonenumber: { phone_number: ->(number) { number.to_s.prepent('+49') } } }
+
+TestClass.translate_hash(hash, tuple)
+=> { 'first_name' => 'John', 'phone_number' => '+4911-22-33-445' }
+```
+
+Or an `Array`.
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+
+hash = { firstname: 'John', lastname: 'Doe' }
+tuple = { firstname: :first_name, lastname: [:last_name, :maiden_name] }
+
+TestClass.translate_hash(hash, tuple)
+=> { 'first_name' => 'John', 'last_name' => 'Doe', 'maiden_name' => 'Doe' }
 ```
 
 ## Development
