@@ -122,14 +122,25 @@ class TestClass
 end
 # Multiple pair hash used as hash value
 hash = { firstname: 'John', phonenumber: '11-22-33-445' }
-tuple = { firstname: :first_name, phonenumber: { phone_number: ->(number) { number.to_s.prepent('+49') }, telephone: :phone_num  } }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: ->(number) { number.to_s.prepent('+49') },
+            telephone: :phone_num
+          }
+        }
 
 TestClass.translate_hash(hash, tuple)
 => { 'first_name' => 'John', 'phone_number' => '11-22-33-445' }
 
 # Lambda used as hash value
 hash = { firstname: 'John', phonenumber: '11-22-33-445' }
-tuple = { firstname: :first_name, phonenumber: { phone_number: ->(number) { number.to_s.prepent('+49') } } }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: ->(number) { number.to_s.prepent('+49') }
+          }
+        }
 
 TestClass.translate_hash(hash, tuple)
 => { 'first_name' => 'John', 'phone_number' => '+4911-22-33-445' }
