@@ -39,7 +39,7 @@ This mixin provides the `indifferently_accessible_json_attrs` class method which
 ```ruby
 class MyModel < ApplicationRecord
   include IndifferentlyAccessibleJsonAttrs
-  
+
   indifferently_accessible_json_attrs :data
 end
 ```
@@ -58,6 +58,26 @@ end
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
 ```
 
+#### NxtSupport::Email
+
+This class collects useful tools around working with email addresses. Use `NxtSupport::Email::REGEXP` to match email address strings. See the sources for a list of criteria it validates.
+
+#### NxtSupport::PreprocessAttributes
+
+This mixin provides the `preprocess_attributes` class method which can preprocess columns before saving by either stripping whitespace, downcasing, or both.
+
+```ruby
+class Book < ApplicationRecord
+  include NxtSupport::PreprocessAttributes
+
+  preprocess_attributes :title, :author, preprocessors: %i[strip downcase]
+end
+
+book = Book.new(title: '  Moche!')
+book.save
+book.title #=> "moche!"
+```
+
 ### NxtSupport/Serializers
 
 Enjoy mixins for your serializers.
@@ -69,7 +89,7 @@ This mixin provides your serializer classes with a `attribute_as_iso8601` and a 
 ```ruby
 class MySerializer < ActiveModel::Serializer
   include NxtSupport::HasTimeAttributes
-  
+
   attributes_as_iso8601 :created_at, :updated_at
 end
 ```
@@ -80,9 +100,9 @@ Enjoy some useful utilities
 
 #### NxtSupport::EnumHash
 
-`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
-Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is 
-no value for the key. 
+`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums.
+Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is
+no value for the key.
 
 ```ruby
 class Book

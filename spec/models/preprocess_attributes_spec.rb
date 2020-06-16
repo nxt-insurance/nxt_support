@@ -26,7 +26,7 @@ RSpec.describe NxtSupport::PreprocessAttributes do
 
     it 'trims the whitespace after saving' do
       movie.save
-      expect(movie.genre).to eq('comedy')
+      expect(movie.reload.genre).to eq('comedy')
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe NxtSupport::PreprocessAttributes do
 
     it 'saves the downcased value' do
       movie.save
-      expect(movie.genre).to eq('comedy')
+      expect(movie.reload.genre).to eq('comedy')
     end
   end
 
@@ -44,7 +44,7 @@ RSpec.describe NxtSupport::PreprocessAttributes do
 
     it 'saves the downcased and trimmed value' do
       movie.save
-      expect(movie.genre).to eq('comedy')
+      expect(movie.reload.genre).to eq('comedy')
     end
   end
 
@@ -53,8 +53,8 @@ RSpec.describe NxtSupport::PreprocessAttributes do
 
     it 'saves the downcased and trimmed value' do
       movie.save
-      expect(movie.genre).to eq('comedy')
-      expect(movie.director).to eq('peter jackson')
+      expect(movie.reload.genre).to eq('comedy')
+      expect(movie.reload.director).to eq('peter jackson')
     end
   end
 
@@ -63,8 +63,8 @@ RSpec.describe NxtSupport::PreprocessAttributes do
 
     it 'saves the record without changes' do
       movie.save
-      expect(movie.genre).to eq(nil)
-      expect(movie.director).to eq(nil)
+      expect(movie.reload.genre).to eq(nil)
+      expect(movie.reload.director).to eq(nil)
     end
   end
 end
