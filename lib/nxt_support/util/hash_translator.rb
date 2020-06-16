@@ -1,7 +1,5 @@
 module NxtSupport
   module HashTranslator
-    extend ActiveSupport::Concern
-
     class HashTranslationService
       class InvalidTranslationArgument < StandardError; end
 
@@ -29,10 +27,8 @@ module NxtSupport
       end
     end
 
-    class_methods do
-      def translate_hash(hash, **tuples)
-        HashTranslationService.new(hash: hash, tuples: tuples).call
-      end
+    def translate_hash(hash, **tuples)
+      HashTranslationService.new(hash: hash, tuples: tuples).call
     end
   end
 end
