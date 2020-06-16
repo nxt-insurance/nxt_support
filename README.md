@@ -81,8 +81,8 @@ Enjoy some useful utilities
 #### NxtSupport::EnumHash
 
 `NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
-Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is 
-no value for the key. It is close enough to flat `NxtRegistry`, but more lightweight. 
+Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is 
+no value for the key.
 
 ```ruby
 class Book
