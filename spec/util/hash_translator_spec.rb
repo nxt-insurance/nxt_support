@@ -26,13 +26,13 @@ RSpec.describe NxtSupport::HashTranslator do
   context 'happy path' do
     it do
       expect(subject).to eq(
-                           'first_name' => 'Lebowsky',
-                           'phone_number' => 'Mobile: 8-800-555-35-35',
-                           'why_anyone' => 'Ideas?',
-                           'needs_same_value' => 'Ideas?',
-                           'but_array_of_keys?' => 'Ideas?',
-                           'will_ask' => 'Ideas?'
-                         )
+        'first_name' => 'Lebowsky',
+        'phone_number' => 'Mobile: 8-800-555-35-35',
+        'why_anyone' => 'Ideas?',
+        'needs_same_value' => 'Ideas?',
+        'but_array_of_keys?' => 'Ideas?',
+        'will_ask' => 'Ideas?'
+      )
     end
   end
 end
