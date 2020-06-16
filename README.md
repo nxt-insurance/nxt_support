@@ -111,39 +111,48 @@ end
 TestClass.translate_hash(firstname: 'John', firstname: :first_name)
 => { 'first_name' => 'John' }
 ```
-The `value` also could be a `Hash`. If this hash contain only 1 pair `key` would be used as a new `key`
-and `value` would be used as it is unless it responds to `#call`. In this cases `#call` would be called and actual value
-passed to the block called (if no, original value would be left). In case there is more than 1 pair first `key` would
-be used and last `value` would be used as well. 
+The `value` also could be a `Hash` where key represents the new key in result hash and value must be a lambda or Proc
+that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value paris or value in key value pair 
+is not a callable block `InvalidTranslationArgument` error would be raised.
 
 ```ruby
 class TestClass
   include NxtSupport::HashTranslator
 end
-# Multiple pair hash used as hash value
+
 hash = { firstname: 'John', phonenumber: '11-22-33-445' }
 tuple = {
           firstname: :first_name,
           phonenumber: {
-            phone_number: ->(number) { number.to_s.prepent('+49') },
-            telephone: :phone_num
+            phone_number: ->(number) { number.to_s.prepend('+49-') }
           }
         }
 
 TestClass.translate_hash(hash, tuple)
-=> { 'first_name' => 'John', 'phone_number' => '11-22-33-445' }
+=> { 'first_name' => 'John', 'phone_number' => '+49-11-22-33-445' }
 
-# Lambda used as hash value
 hash = { firstname: 'John', phonenumber: '11-22-33-445' }
 tuple = {
           firstname: :first_name,
           phonenumber: {
-            phone_number: ->(number) { number.to_s.prepent('+49') }
+            phone_number: :some_symbol
           }
         }
 
 TestClass.translate_hash(hash, tuple)
-=> { 'first_name' => 'John', 'phone_number' => '+4911-22-33-445' }
+=> InvalidTranslationArgument (some_symbol must be a callable block!)
+
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: ->(number) { number.to_s.prepend('+49-') },
+            unused_key: :some_symbol
+          }
+        }
+
+TestClass.translate_hash(hash, tuple)
+=> InvalidTranslationArgument ({:phone_number=>#<Proc:0x00007ff503175b88 (lambda), :unused_key=>:some_symbol} must contain only 1 key-value pair!)
 ```
 
 Or an `Array`.

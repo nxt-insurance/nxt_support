@@ -3,6 +3,8 @@ module NxtSupport
     extend ActiveSupport::Concern
 
     class HashTranslationService
+      class InvalidTranslationArgument < StandardError; end
+
       require 'nxt_init'
 
       include NxtInit
@@ -11,10 +13,10 @@ module NxtSupport
       def call
         tuples.inject(hash.with_indifferent_access) do |acc, (old_key, new_key)|
           if new_key.is_a?(Hash)
-            key = new_key.keys.first
-            value = new_key.values.last
-            value = value.respond_to?(:call) ? value.call(acc.delete(old_key)) : value
-            acc[key] = value
+            raise InvalidTranslationArgument.new("#{new_key} hash must contain only 1 key-value pair!") if new_key.size > 1
+            key, value = new_key.shift
+            raise InvalidTranslationArgument.new("#{value} must be a callable block!") unless value.respond_to?(:call)
+            acc[key] = value.call(acc.delete(old_key))
           elsif new_key.is_a?(Array)
             value = acc.delete(old_key)
             new_key.each { |key| acc[key] = value }
