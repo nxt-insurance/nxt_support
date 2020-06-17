@@ -39,7 +39,7 @@ This mixin provides the `indifferently_accessible_json_attrs` class method which
 ```ruby
 class MyModel < ApplicationRecord
   include IndifferentlyAccessibleJsonAttrs
-  
+
   indifferently_accessible_json_attrs :data
 end
 ```
@@ -58,6 +58,44 @@ end
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
 ```
 
+#### NxtSupport::AssignableValues
+
+The `NxtSupport::AssignableValues` allows you to restrict the possible values for your ActiveRecord model attributes. These values will only be checked on new records or if the attribute in question has been changed, so existing records will not be affected even if they contain invalid values.
+
+```ruby
+class Book < ApplicationRecord
+	include NxtSupport::AssignableValues
+
+  # You can use a block
+  assignable_values_for :genre do
+    %w[fantasy adventure crime historical]
+  end
+
+  # Or you can also use an array argument
+  assignable_values_for :genre, %w[fantasy adventure crime historical]
+end
+
+book = Book.new(genre: 'fantasy', title: 'Moche!')
+book.valid? #=> true
+
+book.genre = 'comedy'
+book.valid? #=> false
+
+book.valid_genres #=> ["fantasy", "adventure", "crime", "historical"]
+```
+
+A default can be included
+```ruby
+assignable_values_for :genre, default: 'crime' do
+  %w[fantasy adventure crime historical]
+end
+```
+```ruby
+book = Book.new(title: 'Moche!')
+book.genre #=> crime
+```
+If the default value is not in the list of assignable values, then validation will fail.
+
 ### NxtSupport/Serializers
 
 Enjoy mixins for your serializers.
@@ -69,7 +107,7 @@ This mixin provides your serializer classes with a `attribute_as_iso8601` and a 
 ```ruby
 class MySerializer < ActiveModel::Serializer
   include NxtSupport::HasTimeAttributes
-  
+
   attributes_as_iso8601 :created_at, :updated_at
 end
 ```
@@ -80,8 +118,8 @@ Enjoy some useful utilities
 
 #### NxtSupport::EnumHash
 
-`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums. 
-Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is 
+`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums.
+Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is
 no value for the key.
 
 ```ruby
@@ -99,7 +137,7 @@ Book::STATES['in_weird_state'] # 'in weird State'
 
 #### NxtSupport::HashTranslator
 
-`NxtSupport::HashTranslator` is a module that allows you to manipulate keys and values of original hash through tuple hash. 
+`NxtSupport::HashTranslator` is a module that allows you to manipulate keys and values of original hash through tuple hash.
 Tuple hash is a hash where `key` - represent's the key of original hash, and `value` - represents the key of result hash.
 Use `#translate_hash` method to get the result hash.
 
@@ -112,7 +150,7 @@ TestClass.translate_hash(firstname: 'John', firstname: :first_name)
 => { 'first_name' => 'John' }
 ```
 The `value` also could be a `Hash` where key represents the new key in result hash and value must be a lambda or Proc
-that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value paris or value in key value pair 
+that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value paris or value in key value pair
 is not a callable block `InvalidTranslationArgument` error would be raised.
 
 ```ruby
