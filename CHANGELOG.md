@@ -1,4 +1,4 @@
-# v0.1.4 2020-06-12
+# v0.1.5 2020-06-17
 
 - Added `NxtSupport::AssignableValues`
 
