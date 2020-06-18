@@ -58,9 +58,43 @@ end
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
 ```
 
-#### NxtSupport::Email
+#### NxtSupport::AssignableValues
 
-This class collects useful tools around working with email addresses. Use `NxtSupport::Email::REGEXP` to match email address strings. See the sources for a list of criteria it validates.
+The `NxtSupport::AssignableValues` allows you to restrict the possible values for your ActiveRecord model attributes. These values will only be checked on new records or if the attribute in question has been changed, so existing records will not be affected even if they contain invalid values.
+
+```ruby
+class Book < ApplicationRecord
+	include NxtSupport::AssignableValues
+
+  # You can use a block
+  assignable_values_for :genre do
+    %w[fantasy adventure crime historical]
+  end
+
+  # Or you can also use an array argument
+  assignable_values_for :genre, %w[fantasy adventure crime historical]
+end
+
+book = Book.new(genre: 'fantasy', title: 'Moche!')
+book.valid? #=> true
+
+book.genre = 'comedy'
+book.valid? #=> false
+
+book.valid_genres #=> ["fantasy", "adventure", "crime", "historical"]
+```
+
+A default can be included
+```ruby
+assignable_values_for :genre, default: 'crime' do
+  %w[fantasy adventure crime historical]
+end
+```
+```ruby
+book = Book.new(title: 'Moche!')
+book.genre #=> crime
+```
+If the default value is not in the list of assignable values, then validation will fail.
 
 #### NxtSupport::PreprocessAttributes
 
@@ -125,7 +159,7 @@ Enjoy some useful utilities
 #### NxtSupport::EnumHash
 
 `NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums.
-Keys will be normalized to be underscore and downcase and access with [] is raising a KeyError in case there is
+Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is
 no value for the key.
 
 ```ruby
@@ -139,6 +173,78 @@ Book::STATES['published'] # 'Published'
 Book::STATES['Published'] # KeyError
 Book::STATES['in_weird_state'] # 'in weird State'
 
+```
+
+#### NxtSupport::HashTranslator
+
+`NxtSupport::HashTranslator` is a module that allows you to manipulate keys and values of original hash through tuple hash.
+Tuple hash is a hash where `key` - represent's the key of original hash, and `value` - represents the key of result hash.
+Use `#translate_hash` method to get the result hash.
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+
+TestClass.translate_hash(firstname: 'John', firstname: :first_name)
+=> { 'first_name' => 'John' }
+```
+The `value` also could be a `Hash` where key represents the new key in result hash and value must be a lambda or Proc
+that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value paris or value in key value pair
+is not a callable block `InvalidTranslationArgument` error would be raised.
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: ->(number) { number.to_s.prepend('+49-') }
+          }
+        }
+
+TestClass.translate_hash(hash, tuple)
+=> { 'first_name' => 'John', 'phone_number' => '+49-11-22-33-445' }
+
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: :some_symbol
+          }
+        }
+
+TestClass.translate_hash(hash, tuple)
+=> InvalidTranslationArgument (some_symbol must be a callable block!)
+
+hash = { firstname: 'John', phonenumber: '11-22-33-445' }
+tuple = {
+          firstname: :first_name,
+          phonenumber: {
+            phone_number: ->(number) { number.to_s.prepend('+49-') },
+            unused_key: :some_symbol
+          }
+        }
+
+TestClass.translate_hash(hash, tuple)
+=> InvalidTranslationArgument ({:phone_number=>#<Proc:0x00007ff503175b88 (lambda), :unused_key=>:some_symbol} must contain only 1 key-value pair!)
+```
+
+Or an `Array`.
+
+```ruby
+class TestClass
+  include NxtSupport::HashTranslator
+end
+
+hash = { firstname: 'John', lastname: 'Doe' }
+tuple = { firstname: :first_name, lastname: [:last_name, :maiden_name] }
+
+TestClass.translate_hash(hash, tuple)
+=> { 'first_name' => 'John', 'last_name' => 'Doe', 'maiden_name' => 'Doe' }
 ```
 
 ## Development
