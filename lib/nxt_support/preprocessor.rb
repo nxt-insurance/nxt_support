@@ -9,36 +9,36 @@ module NxtSupport
       nested :preprocessors
     end
 
-    attr_accessor :columns, :preprocessors, :options
+    attr_accessor :attributes, :preprocessors, :options
     attr_reader :type
 
-    def initialize(columns, options)
+    def initialize(attributes, options)
       @type = options.fetch(:column_type) { :string }
       @options = options
 
-      attributes_to_preprocess(columns, options)
+      attributes_to_preprocess(attributes, options)
       extract_preprocessors
       register_default_preprocessors
     end
 
     def process(record)
-      columns.each do |column|
-        value_to_process = record[column]
+      attributes.each do |attr|
+        value_to_process = record[attr]
         processed_value = process_value(value_to_process)
-        record[column] = processed_value
+        record[attr] = processed_value
       end
     end
 
     private
 
-    def attributes_to_preprocess(columns, options = {})
+    def attributes_to_preprocess(attributes, options = {})
       if options[:only]
-        columns.select! { |attr| attr.in?(options[:only]) }
+        attributes.select! { |attr| attr.in?(options[:only]) }
       elsif options[:except]
-        columns.reject! { |attr| attr.in?(options[:except]) }
+        attributes.reject! { |attr| attr.in?(options[:except]) }
       end
 
-      @columns = columns
+      @attributes = attributes
     end
 
     def extract_preprocessors

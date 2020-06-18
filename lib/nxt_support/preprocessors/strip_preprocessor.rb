@@ -14,7 +14,7 @@ module NxtSupport
         value.strip!
         value
       rescue NoMethodError
-        raise WrongTypeError, 'Column type is not supported for this preprocessor'
+        raise WrongTypeError, 'Attribute type is not supported for this preprocessor'
       end
     end
   end
