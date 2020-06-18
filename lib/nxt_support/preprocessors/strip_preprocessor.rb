@@ -1,5 +1,6 @@
 module NxtSupport
   module Preprocessors
+    class WrongTypeError < StandardError; end
     class StripPreprocessor
       attr_accessor :value
 
@@ -8,10 +9,12 @@ module NxtSupport
       end
 
       def call
-        return value unless value.is_a?(String)
+        return if value.nil?
 
         value.strip!
         value
+      rescue NoMethodError
+        raise WrongTypeError, 'Column type is not supported for this preprocessor'
       end
     end
   end

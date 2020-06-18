@@ -113,4 +113,67 @@ RSpec.describe NxtSupport::PreprocessAttributes do
       expect(movie.reload.director).to eq('peter jackson is a director')
     end
   end
+
+  context 'with an integer' do
+    before do
+      class AddOnePreprocessor
+        attr_accessor :value
+
+        def initialize(value)
+          @value = value
+        end
+
+        def call
+          return value if value.nil?
+
+          value = self.value + 1
+          value
+        end
+      end
+
+      NxtSupport::Preprocessor.register(:add_one, AddOnePreprocessor, :integer)
+    end
+
+    let!(:movie_class) do
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'movies'
+        include NxtSupport::PreprocessAttributes
+        preprocess_attributes :views, preprocessors: [:add_one], column_type: :integer
+      end
+    end
+
+    let(:movie) { movie_class.create(views: 1000) }
+    it 'uses the registered preprocessor' do
+      expect(movie.reload.views).to eq(1001)
+    end
+  end
+
+  context 'with an incorrect type' do
+    let!(:movie_class) do
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'movies'
+        include NxtSupport::PreprocessAttributes
+        preprocess_attributes :views, preprocessors: [:downcase]
+      end
+    end
+
+    let(:movie) { movie_class.create(views: 1000) }
+    it 'uses raises an error' do
+      expect { movie }.to raise_error(NxtSupport::Preprocessors::WrongTypeError)
+    end
+  end
+
+  context 'with no preprocessors provided' do
+    let(:movie_class) do
+      Class.new(ActiveRecord::Base) do
+        self.table_name = 'movies'
+        include NxtSupport::PreprocessAttributes
+        preprocess_attributes :views
+      end
+    end
+
+    it 'raises an error' do
+      expect { movie_class }.to raise_error(ArgumentError)
+    end
+  end
 end

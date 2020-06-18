@@ -5,48 +5,49 @@ module NxtSupport
   class Preprocessor
     extend NxtRegistry
 
-    PREPROCESSORS = registry :preprocessors, callable: false do
-      nested :string do
-        register :strip, NxtSupport::Preprocessors::StripPreprocessor
-        register :downcase, NxtSupport::Preprocessors::DowncasePreprocessor
-      end
+    PREPROCESSORS = registry :type, callable: false do
+      nested :preprocessors
     end
 
-    attr_accessor :columns, :options
+    attr_accessor :columns, :preprocessors, :options
+    attr_reader :type
 
     def initialize(columns, options)
+      @type = options.fetch(:column_type) { :string }
       @options = options
-      @columns = valid_attributes(columns)
+
+      attributes_to_preprocess(columns, options)
+      extract_preprocessors
+      register_default_preprocessors
     end
 
     def process(record)
       columns.each do |column|
-        preprocessors_keys = options[:preprocessors]
-
         value_to_process = record[column]
-        processed_value = process_value(value_to_process, preprocessors_keys)
+        processed_value = process_value(value_to_process)
         record[column] = processed_value
       end
     end
 
-    def type
-      options[:column_type] || :string
-    end
-
     private
 
-    def valid_attributes(attributes)
+    def attributes_to_preprocess(columns, options = {})
       if options[:only]
-        attributes.select! { |attr| attr.in?(options[:only]) }
+        columns.select! { |attr| attr.in?(options[:only]) }
       elsif options[:except]
-        attributes.reject! { |attr| attr.in?(options[:except]) }
+        columns.reject! { |attr| attr.in?(options[:except]) }
       end
 
-      attributes
+      @columns = columns
     end
 
-    def process_value(value, preprocessor_keys)
-      preprocessor_keys.each do |key|
+    def extract_preprocessors
+      @preprocessors = options[:preprocessors]
+      raise ArgumentError, 'No preprocessors provided' unless preprocessors.present?
+    end
+
+    def process_value(value)
+      preprocessors.each do |key|
         value = resolve(key, value)
       end
 
@@ -61,9 +62,14 @@ module NxtSupport
       end
     end
 
+    def register_default_preprocessors
+      PREPROCESSORS.type(:string).preprocessors!(:strip, NxtSupport::Preprocessors::StripPreprocessor)
+      PREPROCESSORS.type(:string).preprocessors!(:downcase, NxtSupport::Preprocessors::DowncasePreprocessor)
+    end
+
     class << self
       def register(name, preprocessor, type = :string)
-        PREPROCESSORS.resolve!(type).register(name, preprocessor)
+        PREPROCESSORS.type(type).preprocessors!(name, preprocessor)
       end
     end
   end
