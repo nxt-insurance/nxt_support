@@ -13,8 +13,8 @@ module NxtSupport
 
         value.strip!
         value
-      rescue NoMethodError
-        raise WrongTypeError, 'Attribute type is not supported for this preprocessor'
+      rescue NoMethodError => e
+        raise WrongTypeError, "Tried to call #{e.name} on #{value}, but #{value} does not respond to #{e.name}"
       end
     end
   end

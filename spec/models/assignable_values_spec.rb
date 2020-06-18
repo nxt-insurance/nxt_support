@@ -7,6 +7,7 @@ RSpec.describe NxtSupport::AssignableValues do
         t.string :genre
         t.string :director
         t.string :title
+        t.integer :views
       end
 
       create_table :careers, :force => true do |t|

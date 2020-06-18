@@ -158,7 +158,7 @@ RSpec.describe NxtSupport::PreprocessAttributes do
     end
 
     let(:movie) { movie_class.create(views: 1000) }
-    it 'uses raises an error' do
+    it 'raises an error' do
       expect { movie }.to raise_error(NxtSupport::Preprocessors::WrongTypeError)
     end
   end
