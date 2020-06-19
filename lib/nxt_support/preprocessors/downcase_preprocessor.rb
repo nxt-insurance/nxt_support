@@ -1,6 +1,7 @@
 module NxtSupport
   module Preprocessors
     class WrongTypeError < StandardError; end
+
     class DowncasePreprocessor
       attr_accessor :value
 

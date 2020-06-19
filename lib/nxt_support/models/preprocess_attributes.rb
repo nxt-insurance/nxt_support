@@ -1,6 +1,7 @@
 module NxtSupport
   module PreprocessAttributes
     extend ActiveSupport::Concern
+
     class_methods do
       attr_reader :nxt_preprocessors
 
