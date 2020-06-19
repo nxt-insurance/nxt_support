@@ -96,6 +96,46 @@ book.genre #=> crime
 ```
 If the default value is not in the list of assignable values, then validation will fail.
 
+#### NxtSupport::PreprocessAttributes
+
+This mixin provides the `preprocess_attributes` class method which can preprocess columns before saving by either stripping whitespace, downcasing, or both.
+
+```ruby
+class Book < ApplicationRecord
+  include NxtSupport::PreprocessAttributes
+
+  preprocess_attributes :title, :author, preprocessors: %i[strip downcase]
+end
+
+book = Book.new(title: '  Moche!')
+book.save
+book.title #=> "moche!"
+```
+
+Register a custom preprocesser:
+
+```ruby
+NxtSupport::Preprocessor.register(:compress, CompressPreprocessor)
+```
+
+Also works with non-string columns
+
+```ruby
+NxtSupport::Preprocessor.register(:add_one, AddOnePreprocessor, :integer)
+```
+
+```ruby
+class Book < ApplicationRecord
+  include NxtSupport::PreprocessAttributes
+
+  preprocess_attributes :views, preprocessors: %i[add_one], column_type: :integer
+end
+
+book = Book.new(views: 1000)
+book.save
+book.views #=> "1001"
+```
+
 ### NxtSupport/Serializers
 
 Enjoy mixins for your serializers.

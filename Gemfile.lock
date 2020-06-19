@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    nxt_support (0.1.5)
+    nxt_support (0.1.6)
       nxt_init
+      nxt_registry
       rails
 
 GEM
@@ -89,6 +90,8 @@ GEM
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     nxt_init (0.1.5)
+      activesupport
+    nxt_registry (0.1.5)
       activesupport
     pry (0.13.1)
       coderay (~> 1.1)

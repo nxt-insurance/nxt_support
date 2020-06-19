@@ -1,3 +1,7 @@
+# v0.1.6 2020-06-18
+
+- Added `NxtSupport::PreprocessAttributes`
+
 # v0.1.5 2020-06-17
 
 - Added `NxtSupport::AssignableValues`
