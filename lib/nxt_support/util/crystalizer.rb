@@ -28,7 +28,7 @@ module NxtSupport
     def ensure_values_are_unique
       return if unique_values.size == 1
 
-      uniqueness_violation_handler.call(collection)
+      on_uniqueness_violation.call(collection)
     end
   end
 end
