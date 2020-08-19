@@ -247,6 +247,19 @@ TestClass.translate_hash(hash, tuple)
 => { 'first_name' => 'John', 'last_name' => 'Doe', 'maiden_name' => 'Doe' }
 ```
 
+#### NxtSupport::Crystallizer
+
+`NxtSupport::Crystallizer` crystallizes a shared value from an array of elements and screams in case the value is not  
+the same across the collection. This is useful in a scenario where you want to guarantee that certain objects share the same 
+attribute. Let's say you want to ensure that all users in your collection reference the same department, then the idea 
+is that you can crystallize the department from your collection. 
+
+```ruby
+NxtSupport::Crystallizer.new(collection: ['andy', 'andy']).call # => 'andy'
+NxtSupport::Crystallizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystallizer::Error  
+NxtSupport::Crystallizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats  
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
