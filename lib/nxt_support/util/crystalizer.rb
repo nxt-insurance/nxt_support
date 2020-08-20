@@ -1,13 +1,13 @@
 module NxtSupport
-  class Crystallizer
+  class Crystalizer
     Error = Class.new(StandardError)
 
     include NxtInit
 
-    attr_init :collection, on_uniqueness_violation: -> { uniqueness_violation_handler }, attribute: :itself
+    attr_init :collection, on_ambiguity: -> { default_ambiguity_handler }, with: :itself
 
     def call
-      ensure_values_are_unique
+      ensure_unanimity
       unique_values.first
     end
 
@@ -18,17 +18,17 @@ module NxtSupport
     end
 
     def resolved_collection
-      @resolved_collection ||= collection.map { |value| value.send(attribute) }
+      @resolved_collection ||= collection.map { |value| with.is_a?(Proc) ? with.call(value) : value.send(with) }
     end
 
-    def uniqueness_violation_handler
-      ->(collection) { raise Error, "Values in collection are not unique: #{collection}" }
+    def default_ambiguity_handler
+      ->(collection) { raise Error, "Values in collection are not unanimous: #{collection}" }
     end
 
-    def ensure_values_are_unique
+    def ensure_unanimity
       return if unique_values.size == 1
 
-      on_uniqueness_violation.call(collection)
+      on_ambiguity.arity == 1 ? on_ambiguity.call(collection) : on_ambiguity.call
     end
   end
 end
