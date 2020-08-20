@@ -258,7 +258,8 @@ is that you can crystallize the department from your collection.
 NxtSupport::Crystalizer.new(collection: ['andy', 'andy']).call # => 'andy'
 NxtSupport::Crystalizer.new(collection: []).call # NxtSupport::Crystalizer::Error
 NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error  
-NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats  
+NxtSupport::Crystalizer.new(collection: insurances, with: :effective_at).call # => shared effective_at or error in case of different effective_ats  
+NxtSupport::Crystalizer.new(collection: insurances, with: ->(user) { user.department_id }).call # block also works  
 ```
 
 ## Development
