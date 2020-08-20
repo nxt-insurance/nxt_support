@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nxt_support (0.1.6)
+    nxt_support (0.1.7)
       nxt_init
       nxt_registry
       rails
@@ -87,7 +87,7 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.14.1)
     nio4r (2.5.2)
-    nokogiri (1.10.9)
+    nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     nxt_init (0.1.5)
       activesupport
@@ -153,7 +153,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
-    websocket-driver (0.7.2)
+    websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     zeitwerk (2.4.0)
