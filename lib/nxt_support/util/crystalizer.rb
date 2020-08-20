@@ -8,17 +8,17 @@ module NxtSupport
 
     def call
       ensure_unanimity
-      unique_values.first
+      collection.first
     end
 
     private
 
     def unique_values
-      @unique_values ||= resolved_collection.uniq
+      @unique_values ||= unanimous_collection.uniq
     end
 
-    def resolved_collection
-      @resolved_collection ||= collection.map { |value| with.is_a?(Proc) ? with.call(value) : value.send(with) }
+    def unanimous_collection
+      @unanimous_collection ||= collection.map { |value| with.is_a?(Proc) ? with.call(value) : value.send(with) }
     end
 
     def default_ambiguity_handler

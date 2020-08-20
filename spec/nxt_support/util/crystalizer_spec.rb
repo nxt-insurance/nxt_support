@@ -41,7 +41,7 @@ RSpec.describe NxtSupport::Crystalizer do
           let(:collection) { %w[andy andy andy].map { |name| OpenStruct.new(name: name) } }
 
           it 'reveals the value' do
-            expect(subject).to eq('andy')
+            expect(subject).to eq(OpenStruct.new(name: 'andy'))
           end
         end
 
@@ -71,7 +71,7 @@ RSpec.describe NxtSupport::Crystalizer do
           let(:collection) { %w[andy andy andy].map { |name| OpenStruct.new(name: name) } }
 
           it 'reveals the value' do
-            expect(subject).to eq('andy')
+            expect(subject).to eq(OpenStruct.new(name: 'andy'))
           end
 
           context 'when the values are not unique' do
