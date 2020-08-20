@@ -1,3 +1,7 @@
+# v0.1.7 2020-08-20
+
+- Added `NxtSupport::Crystalizer`
+
 # v0.1.6 2020-06-18
 
 - Added `NxtSupport::PreprocessAttributes`
