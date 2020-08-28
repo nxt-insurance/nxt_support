@@ -1,11 +1,11 @@
 module NxtSupport
-  class EnumCollection < ActiveSupport::HashWithIndifferentAccess
+  class EnumCollection
     def initialize(*keys)
-      super()
+      @store = ActiveSupport::HashWithIndifferentAccess.new
 
       keys.each do |key|
         normalized_key = normalized_key(key)
-        self[normalized_key] = NxtSupport::Enum.new(key.to_s)
+        store[normalized_key] = NxtSupport::Enum.new(key.to_s)
         define_getter(normalized_key)
       end
 
@@ -17,10 +17,18 @@ module NxtSupport
     end
 
     def [](key)
-      super(key) || (raise KeyError, "No value for key '#{key}' in #{inspect}")
+      store[key] || (raise KeyError, "No value for key '#{key}' in #{store}")
     end
 
+    def to_h
+      store
+    end
+
+    delegate_missing_to :to_h
+
     private
+
+    attr_reader :store
 
     def normalized_key(key)
       key.to_s.downcase.underscore.gsub(/\s+/, '_')
@@ -28,7 +36,7 @@ module NxtSupport
 
     def define_getter(normalized_key)
       define_singleton_method normalized_key do
-        fetch(normalized_key)
+        store[normalized_key]
       end
     end
   end

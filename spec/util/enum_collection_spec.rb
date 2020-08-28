@@ -3,14 +3,12 @@ RSpec.describe NxtSupport::EnumCollection do
     described_class['Nils Sommer', 'Rapha BIG Dog', 'Lütfi']
   end
 
-  context 'when the key exists' do
-    it do
-      expect(subject).to eq(
-        'nils_sommer' => 'Nils Sommer',
-        'rapha_big_dog' => 'Rapha BIG Dog',
-        'lütfi' => 'Lütfi'
-      )
-    end
+  it do
+    expect(subject.to_h).to eq(
+      'nils_sommer' => 'Nils Sommer',
+      'rapha_big_dog' => 'Rapha BIG Dog',
+      'lütfi' => 'Lütfi'
+    )
   end
 
   context 'when the key does not exist' do
