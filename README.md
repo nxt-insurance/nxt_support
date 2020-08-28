@@ -168,10 +168,14 @@ class Book
 end
 
 Book::STATES[:draft] # 'draft'
+Book::STATES.draft # 'draft'
 Book::STATES['revised'] # 'revised'
+Book::STATES.revised # 'revised'
 Book::STATES['published'] # 'Published'
+Book::STATES.published # 'Published'
 Book::STATES['Published'] # KeyError
 Book::STATES['in_weird_state'] # 'in weird State'
+Book::STATES.in_weird_state # 'in weird State'
 
 ```
 
