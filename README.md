@@ -164,7 +164,7 @@ no value for the key.
 
 ```ruby
 class Book
-  STATES = NxtSupport::EnumHash['draft', 'revised', 'Published', 'in weird State']
+  STATES = NxtSupport::EnumCollection['draft', 'revised', 'Published', 'in weird State']
 end
 
 Book::STATES[:draft] # 'draft'

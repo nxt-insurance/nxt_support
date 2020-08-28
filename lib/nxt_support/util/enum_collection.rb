@@ -1,10 +1,12 @@
 module NxtSupport
-  class EnumHash < ActiveSupport::HashWithIndifferentAccess
+  class EnumCollection < ActiveSupport::HashWithIndifferentAccess
     def initialize(*keys)
       super()
 
       keys.each do |key|
-        self[normalized_key(key)] = NxtSupport::Enum.new(key.to_s)
+        normalized_key = normalized_key(key)
+        self[normalized_key] = NxtSupport::Enum.new(key.to_s)
+        define_getter(normalized_key)
       end
 
       freeze
@@ -22,6 +24,12 @@ module NxtSupport
 
     def normalized_key(key)
       key.to_s.downcase.underscore.gsub(/\s+/, '_')
+    end
+
+    def define_getter(normalized_key)
+      define_singleton_method normalized_key do
+        fetch(normalized_key)
+      end
     end
   end
 end
