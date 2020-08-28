@@ -4,7 +4,7 @@ module NxtSupport
       super()
 
       keys.each do |key|
-        self[normalized_key(key)] = key.to_s
+        self[normalized_key(key)] = NxtSupport::Enum.new(key.to_s)
       end
 
       freeze
