@@ -250,15 +250,24 @@ TestClass.translate_hash(hash, tuple)
 #### NxtSupport::Crystalizer
 
 `NxtSupport::Crystalizer` crystallizes a shared value from an array of elements and screams in case the value is not  
-the same across the collection. This is useful in a scenario where you want to guarantee that certain objects share the same 
-attribute. Let's say you want to ensure that all users in your collection reference the same department, then the idea 
-is that you can crystallize the department from your collection. 
+the same across the collection. This is useful in a scenario where you want to guarantee that certain objects share the same
+attribute. Let's say you want to ensure that all users in your collection reference the same department, then the idea
+is that you can crystallize the department from your collection.
 
 ```ruby
 NxtSupport::Crystalizer.new(collection: ['andy', 'andy']).call # => 'andy'
 NxtSupport::Crystalizer.new(collection: []).call # NxtSupport::Crystalizer::Error
 NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error  
 NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats  
+```
+
+#### NxtSupport::BirthDate
+
+`NxtSupport::BirthDate` takes a date and provides some convenience methods related to age.
+
+```ruby
+NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
+NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
 ```
 
 ## Development

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 RSpec.describe NxtSupport::BirthDate do
   let(:now) { Time.parse('2020-09-09') }
 
