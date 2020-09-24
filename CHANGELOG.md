@@ -1,3 +1,7 @@
+# v0.1.9 2020-09-09
+
+- Fix `NxtSupport::PreprocessAttributes` to use new `nxt_registry 0.3.0` interface
+
 # v0.1.8 2020-09-09
 
 - Added `NxtSupport::BirthDate`

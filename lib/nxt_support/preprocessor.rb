@@ -6,7 +6,7 @@ module NxtSupport
     extend NxtRegistry
 
     PREPROCESSORS = registry :type, callable: false do
-      nested :preprocessors
+      level :preprocessors
     end
 
     attr_accessor :attributes, :preprocessors, :options
