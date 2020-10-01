@@ -91,7 +91,7 @@ GEM
       mini_portile2 (~> 2.4.0)
     nxt_init (0.1.5)
       activesupport
-    nxt_registry (0.3.0)
+    nxt_registry (0.3.2)
       activesupport
     pry (0.13.1)
       coderay (~> 1.1)
