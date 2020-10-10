@@ -1,6 +1,4 @@
-# This is deprecated and will be removed
-
-RSpec.describe NxtSupport::EnumHash do
+RSpec.describe NxtSupport::Enum do
   subject do
     described_class['Nils Sommer', 'Rapha BIG Dog', 'Lütfi']
   end
