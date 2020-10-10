@@ -1,4 +1,4 @@
-RSpec.describe NxtSupport::EnumCollection do
+RSpec.describe NxtSupport::Enum do
   subject do
     described_class['Nils Sommer', 'Rapha BIG Dog', 'Lütfi']
   end
