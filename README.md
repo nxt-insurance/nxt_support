@@ -158,13 +158,13 @@ Enjoy some useful utilities
 
 #### NxtSupport::EnumHash
 
-`NxtSupport::EnumHash` is a simple hash with indifferent access to organize a collection of enums.
+`NxtSupport::Enum` is a simple interface with indifferent access to organize a collection of enums.
 Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is
 no value for the key.
 
 ```ruby
 class Book
-  STATES = NxtSupport::EnumCollection['draft', 'revised', 'Published', 'in weird State']
+  STATES = NxtSupport::Enum['draft', 'revised', 'Published', 'in weird State']
 end
 
 Book::STATES[:draft] # 'draft'
