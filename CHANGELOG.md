@@ -1,3 +1,9 @@
+# v0.1.10 2020-10-10
+
+- Introduced `NxtSupport::Enum` 
+- Deprecated `NxtSupport::EnumHash`
+
+
 # v0.1.9 2020-09-09
 
 - Fix `NxtSupport::PreprocessAttributes` to use new `nxt_registry 0.3.0` interface

@@ -156,11 +156,11 @@ end
 
 Enjoy some useful utilities
 
-#### NxtSupport::EnumHash
+#### NxtSupport::Enum
 
-`NxtSupport::Enum` is a simple interface with indifferent access to organize a collection of enums.
-Keys will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is
-no value for the key.
+`NxtSupport::Enum` provides a simple interface to organize enums.
+Values will be normalized to be underscore and downcase and access with [] is raising a `KeyError` in case there is
+no value for the key. There are also normalized readers for all your values.
 
 ```ruby
 class Book
