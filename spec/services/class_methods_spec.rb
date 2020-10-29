@@ -1,6 +1,6 @@
 RSpec.describe NxtSupport::Services::ClassMethods do
-  context 'when #call is used by default' do
-    context 'when no attributes are initialized' do
+  describe '#class_interface' do
+    context 'when #call is used by default' do
       let(:test_class) do
         Class.new do
           include NxtSupport::Services::ClassMethods
@@ -12,12 +12,12 @@ RSpec.describe NxtSupport::Services::ClassMethods do
 
       subject { test_class.call }
 
-      it do
+      it 'successfully calls the class method' do
         expect(subject).to eq('hello there')
       end
     end
 
-    context 'when some attributes are initialized with NxtInit' do
+    context 'when #call is used by default and attributes are initialized' do
       let(:test_class) do
         Class.new do
           include NxtSupport::Services::ClassMethods
@@ -35,14 +35,12 @@ RSpec.describe NxtSupport::Services::ClassMethods do
 
       subject { test_class.call(test_string: test_string) }
 
-      it do
+      it 'successfully calls the class method with attributes' do
         expect(subject).to eq(test_string)
       end
     end
-  end
 
-  context 'when a custom method name is used' do
-    context 'when no attributes are initialized' do
+    context 'when a custom method name is used' do
       let(:test_class) do
         Class.new do
           include NxtSupport::Services::ClassMethods
@@ -57,12 +55,12 @@ RSpec.describe NxtSupport::Services::ClassMethods do
 
       subject { test_class.build }
 
-      it do
+      it 'successfully calls the custom class method' do
         expect(subject).to eq('building..')
       end
     end
 
-    context 'when some attributes are initialized with NxtInit' do
+    context 'when a custom method name is used and attributes are initialized' do
       let(:test_class) do
         Class.new do
           include NxtSupport::Services::ClassMethods
@@ -81,8 +79,25 @@ RSpec.describe NxtSupport::Services::ClassMethods do
 
       subject { test_class.build(test_string: test_string) }
 
-      it do
+      it 'successfully calls the custom class method with attributes' do
         expect(subject).to eq(test_string)
+      end
+    end
+
+    context 'when a wrong value is given to the method' do
+      let(:test_class) do
+        Class.new do
+          include NxtSupport::Services::ClassMethods
+
+          class_interface 123
+        end
+      end
+
+      subject { test_class.call }
+
+      it 'raises an error' do
+        expect { test_class.call }.to raise_error(ArgumentError)
+          .with_message(/Wrong configuration. Please use 'class_interface call: :your_method_name'/)
       end
     end
   end
