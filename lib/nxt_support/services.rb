@@ -1,1 +1,1 @@
-require "nxt_support/services/class_methods"
+require "nxt_support/services/base"

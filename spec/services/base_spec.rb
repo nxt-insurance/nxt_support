@@ -1,9 +1,9 @@
-RSpec.describe NxtSupport::Services::ClassMethods do
+RSpec.describe NxtSupport::Services::Base do
   describe '#class_interface' do
     context 'when #call is used by default' do
       let(:test_class) do
         Class.new do
-          include NxtSupport::Services::ClassMethods
+          include NxtSupport::Services::Base
           def call
             'hello there'
           end
@@ -20,7 +20,7 @@ RSpec.describe NxtSupport::Services::ClassMethods do
     context 'when #call is used by default and attributes are initialized' do
       let(:test_class) do
         Class.new do
-          include NxtSupport::Services::ClassMethods
+          include NxtSupport::Services::Base
           include NxtInit
 
           attr_init :test_string
@@ -43,7 +43,7 @@ RSpec.describe NxtSupport::Services::ClassMethods do
     context 'when a custom method name is used' do
       let(:test_class) do
         Class.new do
-          include NxtSupport::Services::ClassMethods
+          include NxtSupport::Services::Base
 
           class_interface call: :build
 
@@ -63,7 +63,7 @@ RSpec.describe NxtSupport::Services::ClassMethods do
     context 'when a custom method name is used and attributes are initialized' do
       let(:test_class) do
         Class.new do
-          include NxtSupport::Services::ClassMethods
+          include NxtSupport::Services::Base
           include NxtInit
 
           attr_init :test_string
@@ -87,7 +87,7 @@ RSpec.describe NxtSupport::Services::ClassMethods do
     context 'when a wrong value is given to the method' do
       let(:test_class) do
         Class.new do
-          include NxtSupport::Services::ClassMethods
+          include NxtSupport::Services::Base
 
           class_interface 123
         end
