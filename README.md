@@ -274,6 +274,9 @@ NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
 ```
 
+### NxtSupport/Services
+Enjoy your service objects.
+
 #### NxtSupport::Services::Base
 
 `NxtSupport::Services::Base` gives you some convenient sugar for service objects.
@@ -285,11 +288,6 @@ WeatherFetcher.new(location: 'Heidelberg').call
 You can use:
 ```ruby
 WeatherFetcher.call(location: 'Heidelberg')
-```
-
-Or if you implement some method other than `#call`, you can still use it without manually creating an instance:
-```ruby
-HomeBuilder.build(width: 25, length: 40, height: 15, roof_type: :pitched)
 ```
 
 ##### Usage
