@@ -1,6 +1,10 @@
+# v0.1.11 2020-10-29
+
+- Introduced `NxtSupport::Services::Base`
+
 # v0.1.10 2020-10-10
 
-- Introduced `NxtSupport::Enum` 
+- Introduced `NxtSupport::Enum`
 - Deprecated `NxtSupport::EnumHash`
 
 

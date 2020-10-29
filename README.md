@@ -253,7 +253,7 @@ TestClass.translate_hash(hash, tuple)
 
 #### NxtSupport::Crystalizer
 
-`NxtSupport::Crystalizer` crystallizes a shared value from an array of elements and screams in case the value is not  
+`NxtSupport::Crystalizer` crystallizes a shared value from an array of elements and screams in case the value is not
 the same across the collection. This is useful in a scenario where you want to guarantee that certain objects share the same
 attribute. Let's say you want to ensure that all users in your collection reference the same department, then the idea
 is that you can crystallize the department from your collection.
@@ -261,8 +261,8 @@ is that you can crystallize the department from your collection.
 ```ruby
 NxtSupport::Crystalizer.new(collection: ['andy', 'andy']).call # => 'andy'
 NxtSupport::Crystalizer.new(collection: []).call # NxtSupport::Crystalizer::Error
-NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error  
-NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats  
+NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error
+NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats
 ```
 
 #### NxtSupport::BirthDate
@@ -272,6 +272,64 @@ NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).ca
 ```ruby
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
+```
+
+#### NxtSupport::Services::Base
+
+`NxtSupport::Services::Base` gives you some convenient sugar for service objects.
+Instead of:
+```ruby
+WeatherFetcher.new(location: 'Heidelberg').call
+```
+
+You can use:
+```ruby
+WeatherFetcher.call(location: 'Heidelberg')
+```
+
+Or if you implement some method other than `#call`, you can still use it without manually creating an instance:
+```ruby
+HomeBuilder.build(width: 25, length: 40, height: 15, roof_type: :pitched)
+```
+
+##### Usage
+You have to include `NxtSupport::Services::Base` in your service:
+```ruby
+class WeatherFetcher
+  include NxtSupport::Services::Base
+
+  def call
+    'Getting the weather..'
+  end
+end
+```
+
+Use it:
+```ruby
+WeatherFetcher.call # => 'Getting the weather..'
+```
+
+##### With a custom method name
+If you implement a method other than `#call`, you can use `#class_interface call: :your_method`
+```ruby
+class HomeBuilder
+  include NxtSupport::Services::Base
+  include NxtInit
+
+  attr_init :width, :length, :height, :roof_type
+
+  class_interface call: :build
+
+  def build
+    "Building #{width}x#{length}x#{height} house with a #{roof_type} roof"
+  end
+end
+```
+
+Use it:
+```ruby
+HomeBuilder.build(width: 20, length: 40, height: 15, roof_type: :pitched)
+# => Building 20x40x15 house with a pitched roof
 ```
 
 ## Development

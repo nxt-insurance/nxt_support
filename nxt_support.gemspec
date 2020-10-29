@@ -5,8 +5,8 @@ require "nxt_support/version"
 Gem::Specification.new do |spec|
   spec.name          = "nxt_support"
   spec.version       = NxtSupport::VERSION
-  spec.authors       = ["Nils Sommer", "Andreas Robecke"]
-  spec.email         = ["mail@nilssommer.de", "a.robecke@getsafe.de"]
+  spec.authors       = ["Nils Sommer", "Andreas Robecke", "Nicolai Stoianov"]
+  spec.email         = ["mail@nilssommer.de", "a.robecke@getsafe.de", "n.stoianov@hellogetsafe.com"]
 
   spec.summary       = "Support through reusable Mixins and Helpers for Ruby on Rails Applications"
   spec.homepage      = "https://github.com/nxt-insurance/nxt_support"
