@@ -308,7 +308,7 @@ WeatherFetcher.call # => 'Getting the weather..'
 ```
 
 ##### With a custom method name
-If you implement a method other than `#call`, you can use `#class_interface call: :your_method`
+If you implement a method other than `#call`, you can use `#class_interface :your_method`
 ```ruby
 class HomeBuilder
   include NxtSupport::Services::Base
@@ -316,7 +316,7 @@ class HomeBuilder
 
   attr_init :width, :length, :height, :roof_type
 
-  class_interface call: :build
+  class_interface :build
 
   def build
     "Building #{width}x#{length}x#{height} house with a #{roof_type} roof"

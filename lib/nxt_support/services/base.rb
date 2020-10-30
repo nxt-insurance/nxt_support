@@ -3,16 +3,12 @@ module NxtSupport
     module Base
       module ClassMethods
         def class_interface(config = :call)
-          if config.is_a?(Hash)
-            define_singleton_method config.values.first do |*args, **opts|
-              build_instance(*args, **opts).send(config.values.first)
-            end
-          elsif config.is_a?(Symbol)
+          if config.is_a?(Symbol)
             define_singleton_method config do |*args, **opts|
               build_instance(*args, **opts).send(config)
             end
           else
-            raise ArgumentError, "Wrong configuration. Please use 'class_interface call: :your_method_name'"
+            raise ArgumentError, "Wrong configuration. Please use 'class_interface :your_method_name'"
           end
         end
 

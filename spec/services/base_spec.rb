@@ -45,7 +45,7 @@ RSpec.describe NxtSupport::Services::Base do
         Class.new do
           include NxtSupport::Services::Base
 
-          class_interface call: :build
+          class_interface :build
 
           def build
             'building..'
@@ -67,7 +67,7 @@ RSpec.describe NxtSupport::Services::Base do
           include NxtInit
 
           attr_init :test_string
-          class_interface call: :build
+          class_interface :build
 
           def build
             test_string
@@ -97,7 +97,7 @@ RSpec.describe NxtSupport::Services::Base do
 
       it 'raises an error' do
         expect { test_class.call }.to raise_error(ArgumentError)
-          .with_message(/Wrong configuration. Please use 'class_interface call: :your_method_name'/)
+          .with_message(/Wrong configuration. Please use 'class_interface :your_method_name'/)
       end
     end
   end
