@@ -1,3 +1,6 @@
+# v0.1.12 2020-10-29
+- Added `bin/release` script to publish GitHub tags
+
 # v0.1.11 2020-10-29
 
 - Introduced `NxtSupport::Services::Base`
