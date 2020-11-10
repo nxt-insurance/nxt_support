@@ -2,15 +2,5 @@
 
 GEM_VERSION=$(ruby -e '$LOAD_PATH << File.join(File.dirname(__FILE__), "lib"); require "nxt_support/version"; print NxtSupport::VERSION')
 
-gem build nxt_support.gemspec
-
-if [ ! -d "pkg" ]; then
-  mkdir pkg
-fi
-
-mv nxt_support-$GEM_VERSION.gem pkg/nxt_support-$GEM_VERSION.gem
-
 git tag -m "Release $GEM_VERSION" -a v$GEM_VERSION HEAD
 git push origin --tags
-
-gem push --key github --host https://rubygems.pkg.github.com/nxt-insurance pkg/nxt_support-$GEM_VERSION.gem
