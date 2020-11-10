@@ -340,7 +340,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/nxt_insurance/nxt_support.
 
-## Releasing
+## Publishing
 ### GitHub Tags and Releases
 Use this command to push the tag to the GitHub Releases page:
 ```sh
