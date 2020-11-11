@@ -4,3 +4,4 @@ GEM_VERSION=$(ruby -e '$LOAD_PATH << File.join(File.dirname(__FILE__), "lib"); r
 
 git tag -m "Release $GEM_VERSION" -a v$GEM_VERSION HEAD
 git push origin --tags
+bundle exec rake release
