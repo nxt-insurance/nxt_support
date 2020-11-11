@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+GEM_VERSION=$(ruby -e '$LOAD_PATH << File.join(File.dirname(__FILE__), "lib"); require "nxt_support/version"; print NxtSupport::VERSION')
+
+git tag -m "Release $GEM_VERSION" -a v$GEM_VERSION HEAD
+git push origin --tags
+
+bundle exec rake release

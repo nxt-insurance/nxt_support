@@ -340,6 +340,21 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/nxt_insurance/nxt_support.
 
+## Publishing
+### GitHub Tags and Releases
+Use this command to push the tag to the GitHub Releases page as well as to RubyGems:
+```sh
+bin/release
+```
+
+### RubyGems
+For pushing to rubygems:
+  1. Make sure you have ownership rights on RubyGems
+  2. Release the new gem version
+```sh
+bundle exec rake release
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
