@@ -342,7 +342,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/nxt_in
 
 ## Publishing
 ### GitHub Tags and Releases
-Use this command to push the tag to the GitHub Releases page:
+Use this command to push the tag to the GitHub Releases page as well as to RubyGems:
 ```sh
 bin/release
 ```
