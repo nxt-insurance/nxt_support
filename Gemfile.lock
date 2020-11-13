@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nxt_support (0.1.11)
+    nxt_support (0.1.13)
       nxt_init
       nxt_registry
       rails

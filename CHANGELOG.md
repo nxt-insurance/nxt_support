@@ -1,3 +1,6 @@
+# v0.1.13 2020-11-13
+- Fixed `Email::REGEXP` to be more generous about hostname
+
 # v0.1.12 2020-11-11
 - Added `bin/release` script to publish GitHub tags
 

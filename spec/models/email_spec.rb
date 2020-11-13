@@ -3,7 +3,7 @@ RSpec.describe NxtSupport::Email do
     subject { NxtSupport::Email::REGEXP }
 
     let(:valid_emails) do
-      %w[john.doe@example.org john@example.co.uk john@ex-ample.org]
+      %w[john.doe@example.org john@example.co.uk john@ex-ample.org a@b.c]
     end
 
     let(:invalid_emails) do
