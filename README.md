@@ -136,6 +136,48 @@ book.save
 book.views #=> "1001"
 ```
 
+#### NxtSupport::DurationAttributeAccessor
+
+This mixin provides the accessors for `ActiveSupport::Duration` attributes.
+Imagine you have a database table that needs to store some kind of duration data:
+
+```ruby
+# ...
+  create_table :courses, force: true do |t|
+    t.string :class_duration
+    t.string :topic_duration
+    t.string :total_duration
+  end
+# ...
+```
+
+And an appropriate model:
+
+```ruby
+class Course < ActiveRecord::Base
+  include NxtSupport::DurationAttributeAccessor
+
+  duration_attribute_accessor :class_duration, :topic_duration, :total_duration
+end
+```
+
+You can then pass the `ActiveSupport::Duration` objects as arguments and get them back:
+
+```ruby
+course = Course.new(
+  class_duration: 1.hour,
+  topic_duration: 1.month,
+  total_duration: 1.year
+)
+
+# Fields persist in the database as ISO8601-compliant strings
+course # => #<#<Course:0x00007f8bcf2bcfc0>:0x00007f8bcf2c7920 id: nil, class_duration: "PT1H", topic_duration: "P1M", total_duration: "P1Y">
+course.class_duration # => 1 hour
+course.topic_duration # => 1 month
+course.total_duration # => 1 year
+```
+
+
 ### NxtSupport/Serializers
 
 Enjoy mixins for your serializers.
