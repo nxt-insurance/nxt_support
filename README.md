@@ -142,13 +142,13 @@ This mixin provides the accessors for `ActiveSupport::Duration` attributes.
 Imagine you have a database table that needs to store some kind of duration data:
 
 ```ruby
-# ...
+ActiveRecord::Schema.define do
   create_table :courses, force: true do |t|
     t.string :class_duration
     t.string :topic_duration
     t.string :total_duration
   end
-# ...
+end
 ```
 
 And an appropriate model:
