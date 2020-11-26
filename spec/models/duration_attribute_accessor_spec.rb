@@ -70,11 +70,11 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
         subject.new(class_duration: nil)
       end
 
-      it 'stores values as ISO8601 strings' do
+      it 'stores the nil value' do
         expect(course.attributes['class_duration']).to eq(nil)
       end
 
-      it 'returns ActiveSupport::Duration values if the accessors are used directly' do
+      it 'returns nil value' do
         expect(course.class_duration).to eq(nil)
       end
     end
