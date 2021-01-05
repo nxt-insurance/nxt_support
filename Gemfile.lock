@@ -91,7 +91,7 @@ GEM
       mini_portile2 (~> 2.4.0)
     nxt_init (0.1.5)
       activesupport
-    nxt_registry (0.3.2)
+    nxt_registry (0.3.6)
       activesupport
     pry (0.13.1)
       coderay (~> 1.1)
@@ -151,12 +151,12 @@ GEM
     sqlite3 (1.4.2)
     thor (1.0.1)
     thread_safe (0.3.6)
-    tzinfo (1.2.8)
+    tzinfo (1.2.9)
       thread_safe (~> 0.1)
     websocket-driver (0.7.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.4.1)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
