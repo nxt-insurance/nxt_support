@@ -52,7 +52,7 @@ The `safely_find_or_create_by` method provided by this concern catches such an e
 
 ```ruby
 class Book < ApplicationRecord
-	include NxtSupport::SafelyFindOrCreateable
+  include NxtSupport::SafelyFindOrCreateable
 end
 
 Book.safely_find_or_create_by!(market: 'de', title: 'Moche!')
@@ -64,7 +64,7 @@ The `NxtSupport::AssignableValues` allows you to restrict the possible values fo
 
 ```ruby
 class Book < ApplicationRecord
-	include NxtSupport::AssignableValues
+  include NxtSupport::AssignableValues
 
   # You can use a block
   assignable_values_for :genre do
