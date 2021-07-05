@@ -7,6 +7,7 @@ module NxtSupport
     attr_init :collection, on_ambiguity: -> { default_ambiguity_handler }, with: :itself
 
     def call
+      ensure_collection
       ensure_unanimity
       unique_values.first
     end
@@ -29,6 +30,12 @@ module NxtSupport
       return if unique_values.size == 1
 
       on_ambiguity.arity == 1 ? on_ambiguity.call(collection) : on_ambiguity.call
+    end
+
+    def ensure_collection
+      return if collection.respond_to?(:uniq)
+
+      raise Error, "Cannot determine unique values in: #{collection}! Maybe it's not a collection?"
     end
   end
 end

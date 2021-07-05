@@ -105,5 +105,15 @@ RSpec.describe NxtSupport::Crystalizer do
         expect { subject }.to raise_error(ZeroDivisionError)
       end
     end
+
+    context 'when used with a wrong data type' do
+      let(:collection) { 'Marat' }
+
+      subject { described_class.new(collection: collection).call }
+
+      it 'returns an error' do
+        expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, /Cannot determine unique values in: Marat! Maybe it's not a collection?/)
+      end
+    end
   end
 end
