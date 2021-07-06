@@ -380,7 +380,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/nxt_insurance/nxt_support.
+Bug reports and pull requests are welcome on GitHub at https://github.com/nxt-insurance/nxt_support.
 
 ## Publishing
 ### GitHub Tags and Releases
