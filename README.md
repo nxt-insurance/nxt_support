@@ -236,7 +236,7 @@ TestClass.translate_hash(firstname: 'John', firstname: :first_name)
 => { 'first_name' => 'John' }
 ```
 The `value` also could be a `Hash` where key represents the new key in result hash and value must be a lambda or Proc
-that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value paris or value in key value pair
+that would be used to process value from origin hash. If the tuple hash contains more than 1 key-value pairs or value in key value pair
 is not a callable block `InvalidTranslationArgument` error would be raised.
 
 ```ruby
