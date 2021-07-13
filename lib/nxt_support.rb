@@ -7,6 +7,7 @@ require "nxt_support/models"
 require "nxt_support/serializers"
 require "nxt_support/util"
 require "nxt_support/services"
+require "nxt_support/refinements"
 
 module NxtSupport
 end

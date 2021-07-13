@@ -307,6 +307,16 @@ NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::C
 NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats
 ```
 
+or using the refinement
+
+```ruby
+using NxtSupport::Refinements::Crystalizer
+
+['andy', 'andy'].crystalize # => 'andy'
+```
+
+Note that it refines the class `Array` instead of the module `Enumerable`.
+
 #### NxtSupport::BirthDate
 
 `NxtSupport::BirthDate` takes a date and provides some convenience methods related to age.
