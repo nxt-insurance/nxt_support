@@ -315,7 +315,7 @@ using NxtSupport::Refinements::Crystalizer
 ['andy', 'andy'].crystalize # => 'andy'
 ```
 
-Note that it refines the class `Array` instead of the module `Enumerable`.
+Note that for Ruby versions < 3.0 it only refines the class `Array` instead of the module `Enumerable`.
 
 #### NxtSupport::BirthDate
 
