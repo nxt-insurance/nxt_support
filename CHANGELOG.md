@@ -1,3 +1,6 @@
+# v0.1.15 2021-03-26
+- Switched Rails dependency to ActiveRecord and ActiveSupport
+
 # v0.1.14 2020-11-25
 - Added `NxtSupport::DurationAttributeAccessor`
 

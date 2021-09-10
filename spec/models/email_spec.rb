@@ -7,7 +7,7 @@ RSpec.describe NxtSupport::Email do
     end
 
     let(:invalid_emails) do
-      ['john doe@example.org', 'john@.example.org', 'john@example']
+      ['john doe@example.org', 'john@.example.org', 'john@example', 'john@example..org', 'john@example.org.', 'john@.example.org']
     end
 
     it 'matches valid emails' do
