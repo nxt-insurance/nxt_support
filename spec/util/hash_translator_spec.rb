@@ -4,7 +4,7 @@ RSpec.describe NxtSupport::HashTranslator do
       include NxtSupport::HashTranslator
     end
 
-    TestClass.new.translate_hash(hash, tuples)
+    TestClass.new.translate_hash(hash, **tuples)
   end
 
   let(:hash) do

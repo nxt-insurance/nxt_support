@@ -2,18 +2,31 @@
 #
 # Check https://circleci.com/docs/2.0/language-ruby/ for more details
 #
-version: 2
+version: 2.1
+
+workflows:
+  build:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              ruby-version: ["2.6.8", "2.7.4", "3.0.2"]
+
 jobs:
   build:
+    parameters:
+      ruby-version:
+        type: string
+
     docker:
       # specify the version you desire here
-      - image: circleci/ruby:2.6.4-node
+      - image: circleci/ruby:<< parameters.ruby-version >>-node
 
     working_directory: ~/repo
 
     steps:
       - checkout
-      
+
       - run:
           name: Install apt dependencies
           command: |
@@ -26,7 +39,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "Gemfile.lock" }}
-            
+
       - run: gem install bundler
 
       - run:
