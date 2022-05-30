@@ -330,7 +330,7 @@ The crystallizer raises a `NxtSupport::Crystalizer::Error` if the values are not
 
 ```ruby
 insurances.crystalize(with: :effective_at) do |effective_ats|
-  raise SomethingsWrong, "Insurances don't start at the same date"
+  raise SomethingsWrong, "Insurances don't start on the same date"
 end
 ```
 

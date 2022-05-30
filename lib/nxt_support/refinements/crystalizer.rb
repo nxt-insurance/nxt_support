@@ -10,8 +10,6 @@ module NxtSupport
         def crystalize(with: :itself, &block)
           ::NxtSupport::Crystalizer.new(collection: self, with: with, on_ambiguity: block).call
         end
-
-        alias_method :crystallize, :crystalize
       end
     end
   end
