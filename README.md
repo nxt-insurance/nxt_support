@@ -304,10 +304,9 @@ is that you can crystallize the department from your collection.
 NxtSupport::Crystalizer.new(collection: ['andy', 'andy']).call # => 'andy'
 NxtSupport::Crystalizer.new(collection: []).call # NxtSupport::Crystalizer::Error
 NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error
-NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats
 ```
 
-or using the refinement
+or using the refinement:
 
 ```ruby
 using NxtSupport::Refinements::Crystalizer
@@ -316,6 +315,24 @@ using NxtSupport::Refinements::Crystalizer
 ```
 
 Note that for Ruby versions < 3.0 it only refines the class `Array` instead of the module `Enumerable`.
+
+
+You can also specify the method to be checked and returned:
+
+```ruby
+# Return `.effective_at` or error if `.effective_at`s are different
+NxtSupport::Crystalizer.new(collection: insurances, with: :effective_at).call
+NxtSupport::Crystalizer.new(collection: insurances, with: ->(i){ i.effective_at }).call
+insurances.crystalize(with: :effective_at)
+```
+
+The crystallizer raises a `NxtSupport::Crystalizer::Error` if the values are not the same, but you can override this:
+
+```ruby
+insurances.crystalize(with: :effective_at) do |effective_ats|
+  raise SomethingsWrong, "Insurances don't start at the same date"
+end
+```
 
 #### NxtSupport::BirthDate
 
