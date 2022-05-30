@@ -1,7 +1,6 @@
 # v0.3.0 2022-05-30
 - Support passing `with` to refinement
 - Call ambiguity handler with resolved collection rather than original collection, to avoid logging huge values
-- Add `crystallize` alias
 
 # v0.1.15 2021-03-26
 - Switched Rails dependency to ActiveRecord and ActiveSupport
