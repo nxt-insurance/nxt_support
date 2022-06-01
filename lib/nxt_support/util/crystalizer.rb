@@ -28,7 +28,7 @@ module NxtSupport
     def ensure_unanimity
       return if unique_values.size == 1
 
-      on_ambiguity.arity == 1 ? on_ambiguity.call(collection) : on_ambiguity.call
+      on_ambiguity.arity == 1 ? on_ambiguity.call(resolved_collection) : on_ambiguity.call
     end
   end
 end
