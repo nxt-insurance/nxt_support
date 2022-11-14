@@ -41,7 +41,7 @@ RSpec.describe NxtSupport::Refinements::Crystalizer do
 
     context 'without refinement' do
       it 'raises an error' do
-        expect { OrdinaryClass.new([1, 1, 1]).crystalize }.to raise_error(NoMethodError, "undefined method `crystalize' for [1, 1, 1]:Array")
+        expect { OrdinaryClass.new([1, 1, 1]).crystalize }.to raise_error(NoMethodError, /undefined method `crystalize'/)
       end
     end
 
