@@ -1,3 +1,7 @@
+# v0.4.0 2022-11-14
+- Add `SentryErrorID` middleware
+- Drop support for Ruby 2.x
+
 # v0.3.0 2022-05-30
 - Support passing `with` to refinement
 - Call ambiguity handler with resolved collection rather than original collection, to avoid logging huge values

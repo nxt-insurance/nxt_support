@@ -24,6 +24,20 @@ Or install it yourself as:
 
 Here's an overview all the supporting features.
 
+### NxtSupport::Middleware::SentryErrorID
+A Rack middleware that adds a `Sentry-Error-ID` header to 5xx responses. 
+The header is only added if an error was reported during the request. 
+The error ID is gotten from [`sentry.error_event_id` in the Rack env](https://github.com/getsentry/sentry-ruby/pull/1849)).
+You can then visit `https://sentry.io/organizations/<org-slug>>?query=<error-event-id>`
+to go directly to the error (it may not show up immediately).
+
+Note that this middleware must be inserted before Sentry's own middleware. 
+You can run `rails middleware` to verify the order of your registered middleware.
+
+```rb
+config.middleware.insert_before 0, NxtSupport::Middleware::SentryErrorID
+```
+
 ### NxtSupport/Models
 
 Enjoy support for your models.

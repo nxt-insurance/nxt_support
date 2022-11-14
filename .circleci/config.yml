@@ -10,7 +10,9 @@ workflows:
       - build:
           matrix:
             parameters:
-              ruby-version: ["2.6.8", "2.7.4", "3.0.2"]
+              ruby-version: ["3.0.2", "3.1.2"]
+orbs:
+  ruby: circleci/ruby@2.0.0
 
 jobs:
   build:
@@ -20,39 +22,13 @@ jobs:
 
     docker:
       # specify the version you desire here
-      - image: circleci/ruby:<< parameters.ruby-version >>-node
+      - image: cimg/ruby:<< parameters.ruby-version >>
 
     working_directory: ~/repo
 
     steps:
       - checkout
-
-      - run:
-          name: Install apt dependencies
-          command: |
-            sudo apt update -q \
-            && sudo apt upgrade -q \
-            && sudo apt install -qy --no-install-recommends \
-              sqlite3 libsqlite3-dev
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "Gemfile.lock" }}
-
-      - run: gem install bundler
-
-      - run:
-          name: install dependencies
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-
-      # run tests!
+      - ruby/install-deps
       - run:
           name: run tests
           command: |
