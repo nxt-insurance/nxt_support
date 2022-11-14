@@ -10,7 +10,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              ruby-version: ["2.6.8", "2.7.4", "3.0.2"]
+              ruby-version: ["3.0.2", "3.1.2"]
 
 jobs:
   build:
