@@ -1,3 +1,6 @@
+# v0.4.1 2022-11-18
+- Rename header to `Sentry-Error-Id` for consistency
+
 # v0.4.0 2022-11-14
 - Add `SentryErrorID` middleware
 - Drop support for Ruby 2.x

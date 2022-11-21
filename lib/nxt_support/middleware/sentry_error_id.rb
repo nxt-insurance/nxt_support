@@ -8,7 +8,7 @@ module NxtSupport
       def call(env)
         status, headers, body = @app.call(env)
         if status >= 500 && env['sentry.error_event_id']
-          headers["Sentry-Error-ID"] = env['sentry.error_event_id']
+          headers["Sentry-Error-Id"] = env['sentry.error_event_id']
         end
         [status, headers, body]
       end
