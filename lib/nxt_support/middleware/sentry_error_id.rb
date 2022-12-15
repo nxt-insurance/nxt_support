@@ -9,6 +9,7 @@ module NxtSupport
         status, headers, body = @app.call(env)
         if status >= 500 && env['sentry.error_event_id']
           headers["Sentry-Error-Id"] = env['sentry.error_event_id']
+          headers["Access-Control-Expose-Headers"] = "*"
         end
         [status, headers, body]
       end
