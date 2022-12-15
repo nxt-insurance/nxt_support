@@ -1,3 +1,6 @@
+# v0.4.2 2022-12-19
+- `Sentry-Error-Id`: Set `Access-Control-Expose-Headers` so frontend can access header
+
 # v0.4.1 2022-11-18
 - Rename header to `Sentry-Error-Id` for consistency
 
