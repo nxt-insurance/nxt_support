@@ -1,3 +1,6 @@
+# v0.4.3 2023-03-22
+- `Sentry-Error-Id`: Don't assume status code is an Integer
+
 # v0.4.2 2022-12-19
 - `Sentry-Error-Id`: Set `Access-Control-Expose-Headers` so frontend can access header
 
