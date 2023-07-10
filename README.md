@@ -24,6 +24,20 @@ Or install it yourself as:
 
 Here's an overview all the supporting features.
 
+### NxtSupport::Middleware::SentryErrorID
+A Rack middleware that adds a `Sentry-Error-ID` header to 5xx responses. 
+The header is only added if an error was reported during the request. 
+The error ID is gotten from [`sentry.error_event_id` in the Rack env](https://github.com/getsentry/sentry-ruby/pull/1849)).
+You can then visit `https://sentry.io/organizations/<org-slug>>?query=<error-event-id>`
+to go directly to the error (it may not show up immediately).
+
+Note that this middleware must be inserted before Sentry's own middleware. 
+You can run `rails middleware` to verify the order of your registered middleware.
+
+```rb
+config.middleware.insert_before 0, NxtSupport::Middleware::SentryErrorID
+```
+
 ### NxtSupport/Models
 
 Enjoy support for your models.
@@ -304,7 +318,34 @@ is that you can crystallize the department from your collection.
 NxtSupport::Crystalizer.new(collection: ['andy', 'andy']).call # => 'andy'
 NxtSupport::Crystalizer.new(collection: []).call # NxtSupport::Crystalizer::Error
 NxtSupport::Crystalizer.new(collection: ['andy', 'scotty']).call # NxtSupport::Crystalizer::Error
-NxtSupport::Crystalizer.new(collection: insurances, attribute: :effective_at).call # => shared effective_at or error in case of different effective_ats
+```
+
+or using the refinement:
+
+```ruby
+using NxtSupport::Refinements::Crystalizer
+
+['andy', 'andy'].crystalize # => 'andy'
+```
+
+Note that for Ruby versions < 3.0 it only refines the class `Array` instead of the module `Enumerable`.
+
+
+You can also specify the method to be checked and returned:
+
+```ruby
+# Return `.effective_at` or error if `.effective_at`s are different
+NxtSupport::Crystalizer.new(collection: insurances, with: :effective_at).call
+NxtSupport::Crystalizer.new(collection: insurances, with: ->(i){ i.effective_at }).call
+insurances.crystalize(with: :effective_at)
+```
+
+The crystallizer raises a `NxtSupport::Crystalizer::Error` if the values are not the same, but you can override this:
+
+```ruby
+insurances.crystalize(with: :effective_at) do |effective_ats|
+  raise SomethingsWrong, "Insurances don't start on the same date"
+end
 ```
 
 #### NxtSupport::BirthDate
@@ -376,7 +417,22 @@ HomeBuilder.build(width: 20, length: 40, height: 15, roof_type: :pitched)
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. 
+
+
+First, if you don't want to always log in with your RubyGems password, you can create an API key from the web, and then:
+
+```shell
+bundle config set gem.push_key rubygems
+```
+
+Add to `~/.gem/credentials` (create if it doesn't exist):
+
+```shell
+:rubygems: <your Rubygems API key>
+```
+
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 

@@ -1,3 +1,3 @@
 module NxtSupport
-  VERSION = "0.1.15".freeze
+  VERSION = "0.4.3".freeze
 end

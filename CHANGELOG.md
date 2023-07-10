@@ -1,3 +1,20 @@
+# v0.4.3 2023-03-22
+- `Sentry-Error-Id`: Don't assume status code is an Integer
+
+# v0.4.2 2022-12-19
+- `Sentry-Error-Id`: Set `Access-Control-Expose-Headers` so frontend can access header
+
+# v0.4.1 2022-11-18
+- Rename header to `Sentry-Error-Id` for consistency
+
+# v0.4.0 2022-11-14
+- Add `SentryErrorID` middleware
+- Drop support for Ruby 2.x
+
+# v0.3.0 2022-05-30
+- Support passing `with` to refinement
+- Call ambiguity handler with resolved collection rather than original collection, to avoid logging huge values
+
 # v0.1.15 2021-03-26
 - Switched Rails dependency to ActiveRecord and ActiveSupport
 
