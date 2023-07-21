@@ -6,8 +6,7 @@ describe NxtSupport::Console do
       @opts = nil
       argv = ["test_task_#{example.object_id}", "--silent", "--", *option_string.split(' ')]
       Rake::Task.define_task "test_task_#{example.object_id}" do
-        opts = NxtSupport::Console.rake_cli_options(argv, &option_definition_block)
-        @opts = opts
+        @opts = NxtSupport::Console.rake_cli_options(argv, &option_definition_block)
       end
 
       Rake.application.run(argv)
