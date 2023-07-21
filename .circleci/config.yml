@@ -10,9 +10,9 @@ workflows:
       - build:
           matrix:
             parameters:
-              ruby-version: ["3.0.2", "3.1.3", "3.2.1"]
+              ruby-version: ["3.0.2", "3.1.3", "3.2.1", "3.2.2"]
 orbs:
-  ruby: circleci/ruby@2.0.0
+  ruby: circleci/ruby@2.0.1
 
 jobs:
   build:
@@ -28,7 +28,9 @@ jobs:
 
     steps:
       - checkout
-      - ruby/install-deps
+      - ruby/install-deps:
+          key: gems-v2
+          include-branch-in-cache-key: false
       - run:
           name: run tests
           command: |
