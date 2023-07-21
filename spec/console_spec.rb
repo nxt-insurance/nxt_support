@@ -10,6 +10,7 @@ describe NxtSupport::Console do
       end
 
       Rake.application.run(argv)
+      @opts
     end
 
     let(:option_definition_block) do
@@ -27,9 +28,7 @@ describe NxtSupport::Console do
       end
 
       it 'parses CLI options correctly' do
-        subject
-
-        expect(@opts).to eq(
+        expect(subject).to eq(
           {
             simulate: true,
             contract_numbers: %w[123 456],
@@ -46,9 +45,7 @@ describe NxtSupport::Console do
       end
 
       it 'falls back to default if specified, or does not include the option, if no default' do
-        subject
-
-        expect(@opts).to eq(
+        expect(subject).to eq(
           {
             contract_numbers: %w[123 456],
             limit: 10,
@@ -61,9 +58,7 @@ describe NxtSupport::Console do
       let(:option_string) { ' ' }
 
       it 'returns only defaults' do
-        subject
-
-        expect(@opts).to eq(
+        expect(subject).to eq(
           {
             limit: 10,
           }
@@ -90,10 +85,10 @@ describe NxtSupport::Console do
       end
 
       it 'raises an error' do
-        expect { subject }.to  raise_error(SystemExit) do |e|
+        expect { subject }.to raise_error(SystemExit) do |e|
           expect(e.cause).to be_an(OptionParser::NeedlessArgument)
           expect(e.cause.message).to match(/needless argument: --simulate=123,456/)
-          end
+        end
       end
     end
   end
