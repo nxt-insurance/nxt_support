@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nxt_support (0.4.3)
+    nxt_support (0.5.0)
       activerecord
       activesupport
       nxt_init

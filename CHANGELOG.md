@@ -1,3 +1,6 @@
+# v0.5.0 2023-03-22
+- Add `rake_cli_options`
+
 # v0.4.3 2023-03-22
 - `Sentry-Error-Id`: Don't assume status code is an Integer
 
