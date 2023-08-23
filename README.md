@@ -2,7 +2,10 @@
 
 # NxtSupport
 
-This is a collection of mixins, helpers and classes that cover several aspects of a ruby on rails application, such as models, controllers and job processing. At [Getsafe](https://hellogetsafe.com), we run multiple Ruby on Rails apps as part of our insurance infrastructure and we found that we wrote quite some shared helpers that are duplicated among applications and serve a generic purpose that we could share in this gem. Look at it as our version of ActiveSupport (which is amazing! ❤️), droping in the pieces we sometimes miss in the beautiful puzzle of Rails.
+This is a collection of mixins, helpers and classes that cover several aspects of a ruby on rails application, such as models, controllers and job processing. 
+At [Getsafe](https://hellogetsafe.com), we run multiple Ruby on Rails apps as part of our insurance infrastructure and we found that we wrote quite some 
+shared helpers that are duplicated among applications and serve a generic purpose that we could share in this gem. 
+Look at it as our version of ActiveSupport (which is amazing! ❤️), dropping in the pieces we sometimes miss in the beautiful puzzle of Rails.
 
 ## Installation
 
@@ -28,7 +31,7 @@ Here's an overview all the supporting features.
 A Rack middleware that adds a `Sentry-Error-ID` header to 5xx responses. 
 The header is only added if an error was reported during the request. 
 The error ID is gotten from [`sentry.error_event_id` in the Rack env](https://github.com/getsentry/sentry-ruby/pull/1849)).
-You can then visit `https://sentry.io/organizations/<org-slug>>?query=<error-event-id>`
+You can then visit `https://<org-slug>.sentry.io/issues/?query=<error-event-id>`
 to go directly to the error (it may not show up immediately).
 
 Note that this middleware must be inserted before Sentry's own middleware. 
@@ -356,6 +359,64 @@ end
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
 ```
+
+### NxtSupport::Console.rake_cli_options
+A simple utility that uses Ruby's [OptionParser](https://docs.ruby-lang.org/en/2.1.0/OptionParser.html)
+to make it easier to pass CLI options to Rake tasks.
+
+#### Task definition
+Call `NxtSupport::Console.rake_cli_options` with a block. Use the `option` method to define options.
+It takes one required argument (the flag syntax), and optionally the data type and a default value.
+
+Options which are not booleans **must** end with an `=`.
+
+```rb
+task my_task: :environment do
+  opts = NxtSupport::Console.rake_cli_options do
+    option '--simulate', default: false
+    option '--contract_numbers=', Array, default: []
+    option '--limit=', Integer
+    option '--effective_at='
+  end
+
+  do_stuff_with opts
+end
+```
+
+#### Command line
+
+A `--` must be passed after the Rake task name and any Rake-specific options, 
+before our custom task options. (With `heroku run`, you'll also need a second `--`).
+
+```sh
+rake my_task -- --simulate --contract_numbers=123,456 --effective_at=2022-01-02 --limit=20
+# {:contract_numbers=>["123", "456"], :simulate=>true, :effective_at=>"2022-01-02", :limit=>20}
+```
+
+On Heroku (note the second `--`):
+
+```sh
+heroku run rake my_task -- -- --simulate --contract_numbers=123,456 --effective_at=2022-01-02 --limit=20
+```
+
+If any options are not passed, they'll be replaced with their defaults. 
+If no default was specified, they will _not_ be present in the returned hash.
+
+```sh
+rake my_task -- --effective_at=2022-10-13
+# {:simulate=>false, :effective_at=>"2022-10-13", :contract_numbers=>[]}
+```
+
+If you specify an option which was not defined, the command will exit with an error:
+
+```sh
+rake my_task -- --effective_at=2022-10-13 --testing
+# invalid option: --testing
+```
+
+#### Limitations
+- Short arguments aren't supported (`-l` as a shortcut for `--limit`).
+- On the command line, options with values must be passed with an `=` at the end. `--effective_at 2022-10-13` will not work.
 
 ### NxtSupport/Services
 Enjoy your service objects.
