@@ -1,3 +1,6 @@
+# v0.6.0 2024-09-27
+- Added `NxtSupport::Uuid`
+
 # v0.5.0 2023-03-22
 - Add `rake_cli_options`
 

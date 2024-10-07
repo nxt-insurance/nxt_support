@@ -31,7 +31,9 @@ module NxtSupport
     class_methods do
       def indifferently_accessible_json_attrs(*attrs)
         attrs.each do |attr|
-          serialize attr, JsonSerializer
+
+          serialize attr, coder: JsonSerializer
+          # serialize attr, JsonSerializer
         end
       end
 
