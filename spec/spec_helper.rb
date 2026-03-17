@@ -1,12 +1,13 @@
-require "bundler/setup"
-require "pry"
-require "nxt_support"
+require 'base64'
+require 'bundler/setup'
+require 'pry'
+require 'nxt_support'
 require 'active_record'
-require "active_support/testing/time_helpers"
+require 'active_support/testing/time_helpers'
 
 ActiveRecord::Base.establish_connection(
-  :adapter => 'sqlite3',
-  :database => ':memory:'
+  adapter: 'sqlite3',
+  database: ':memory:'
 )
 
 RSpec.configure do |config|

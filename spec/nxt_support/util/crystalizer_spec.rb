@@ -1,9 +1,8 @@
 RSpec.describe NxtSupport::Crystalizer do
-
   describe '#call' do
     context 'without with' do
       subject do
-        described_class.new(collection: collection).call
+        described_class.new(collection:).call
       end
 
       context 'when the values are unique' do
@@ -18,7 +17,10 @@ RSpec.describe NxtSupport::Crystalizer do
         let(:collection) { %w[andy scotty] }
 
         it 'raises an error' do
-          expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: ["andy", "scotty"]')
+          expect do
+            subject
+          end.to raise_error(NxtSupport::Crystalizer::Error,
+                             'Values in collection are not unanimous: ["andy", "scotty"]')
         end
       end
 
@@ -26,7 +28,9 @@ RSpec.describe NxtSupport::Crystalizer do
         let(:collection) { %w[] }
 
         it 'raises an error' do
-          expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: []')
+          expect do
+            subject
+          end.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: []')
         end
       end
     end
@@ -34,11 +38,12 @@ RSpec.describe NxtSupport::Crystalizer do
     context 'with :with option' do
       context 'with method' do
         subject do
-          described_class.new(collection: collection, with: :name).call
+          described_class.new(collection:, with: :name).call
         end
 
         context 'when the values are unique' do
-          let(:collection) { %w[andy andy andy].map { |name| OpenStruct.new(name: name) } }
+          let(:name_data) { Data.define(:name) }
+          let(:collection) { %w[andy andy andy].map { name_data.new(name: _1) } }
 
           it 'reveals the value' do
             expect(subject).to eq('andy')
@@ -46,7 +51,8 @@ RSpec.describe NxtSupport::Crystalizer do
         end
 
         context 'when the values are not unique' do
-          let(:collection) { %w[andy scotty].map { |name| OpenStruct.new(name: name) } }
+          let(:name_data) { Data.define(:name) }
+          let(:collection) { %w[andy scotty].map { name_data.new(name: _1) } }
 
           it 'raises an error' do
             expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, /Values in collection are not unanimous:/)
@@ -64,21 +70,25 @@ RSpec.describe NxtSupport::Crystalizer do
 
       context 'with block' do
         subject do
-          described_class.new(collection: collection, with: ->(struct) { struct.name } ).call
+          described_class.new(collection:, with: ->(struct) { struct.name }).call
         end
 
         context 'when the values are unique' do
-          let(:collection) { %w[andy andy andy].map { |name| OpenStruct.new(name: name) } }
+          let(:name_data) { Data.define(:name) }
+          let(:collection) { %w[andy andy andy].map { name_data.new(name: _1) } }
 
           it 'reveals the value' do
             expect(subject).to eq('andy')
           end
 
           context 'when the values are not unique' do
-            let(:collection) { %w[andy scotty].map { |name| OpenStruct.new(name: name) } }
+            let(:name_data) { Data.define(:name) }
+            let(:collection) { %w[andy scotty].map { name_data.new(name: _1) } }
 
             it 'raises an error' do
-              expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, /Values in collection are not unanimous:/)
+              expect do
+                subject
+              end.to raise_error(NxtSupport::Crystalizer::Error, /Values in collection are not unanimous:/)
             end
           end
 
@@ -86,7 +96,9 @@ RSpec.describe NxtSupport::Crystalizer do
             let(:collection) { %w[] }
 
             it 'raises an error' do
-              expect { subject }.to raise_error(NxtSupport::Crystalizer::Error, /Values in collection are not unanimous:/)
+              expect do
+                subject
+              end.to raise_error(NxtSupport::Crystalizer::Error, /Values in collection are not unanimous:/)
             end
           end
         end
@@ -98,7 +110,7 @@ RSpec.describe NxtSupport::Crystalizer do
       let(:custom_handler) { -> { raise ZeroDivisionError, 'oh oh' } }
 
       subject do
-        described_class.new(collection: collection, on_ambiguity: custom_handler).call
+        described_class.new(collection:, on_ambiguity: custom_handler).call
       end
 
       it 'raises an error' do

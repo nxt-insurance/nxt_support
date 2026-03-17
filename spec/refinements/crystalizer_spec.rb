@@ -41,7 +41,9 @@ RSpec.describe NxtSupport::Refinements::Crystalizer do
 
     context 'without refinement' do
       it 'raises an error' do
-        expect { OrdinaryClass.new([1, 1, 1]).crystalize }.to raise_error(NoMethodError, /undefined method `crystalize'/)
+        expect do
+          OrdinaryClass.new([1, 1, 1]).crystalize
+        end.to raise_error(NoMethodError, /undefined method .crystalize./)
       end
     end
 
@@ -55,18 +57,23 @@ RSpec.describe NxtSupport::Refinements::Crystalizer do
 
         context 'when the array cannot be crystalized' do
           it 'raises an error' do
-            expect { RefinedClass.new([1, 2, 3]).crystalize }.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: [1, 2, 3]')
+            expect do
+              RefinedClass.new([1, 2,
+                                3]).crystalize
+            end.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: [1, 2, 3]')
           end
         end
       end
 
       context 'when the attribute is specified' do
+        let(:ab_data) { Data.define(:a, :b) }
+
         context 'when the array can be crystallized' do
           it 'crystallizes' do
             collection = [
-              OpenStruct.new({a: 1, b: 0}),
-              OpenStruct.new({a: 1, b: 1}),
-              OpenStruct.new({a: 1, b: 2}),
+              ab_data.new(a: 1, b: 0),
+              ab_data.new(a: 1, b: 1),
+              ab_data.new(a: 1, b: 2)
             ]
             expect(RefinedClass.new(collection).crystalize(with: :a)).to eq 1
           end
@@ -75,11 +82,14 @@ RSpec.describe NxtSupport::Refinements::Crystalizer do
         context 'when the array cannot be crystallized' do
           it 'raises an error' do
             collection = [
-              OpenStruct.new({a: 1, b: 0}),
-              OpenStruct.new({a: 2, b: 1}),
-              OpenStruct.new({a: 3, b: 2}),
+              ab_data.new(a: 1, b: 0),
+              ab_data.new(a: 2, b: 1),
+              ab_data.new(a: 3, b: 2)
             ]
-            expect { RefinedClass.new(collection).crystalize(with: :a) }.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: [1, 2, 3]')
+            expect do
+              RefinedClass.new(collection).crystalize(with: :a)
+            end.to raise_error(NxtSupport::Crystalizer::Error,
+                               'Values in collection are not unanimous: [1, 2, 3]')
           end
         end
       end
@@ -107,7 +117,10 @@ RSpec.describe NxtSupport::Refinements::Crystalizer do
 
         context 'when the array cannot be crystalized' do
           it 'raises an error' do
-            expect { RefinedClassWithNxtInit.new(array: [1, 2, 3]) }.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: [1, 2, 3]')
+            expect do
+              RefinedClassWithNxtInit.new(array: [1, 2,
+                                                  3])
+            end.to raise_error(NxtSupport::Crystalizer::Error, 'Values in collection are not unanimous: [1, 2, 3]')
           end
         end
       end
