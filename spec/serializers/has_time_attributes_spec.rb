@@ -1,18 +1,20 @@
 RSpec.describe NxtSupport::HasTimeAttributes do
+  let(:time_data) { Data.define(:date, :time, :duration) }
+
   subject do
+    data_class = time_data
     Class.new do
       include NxtSupport::HasTimeAttributes
 
-      def object
-        OpenStruct.new(
+      define_method(:object) do
+        data_class.new(
           date: Date.current,
           time: Time.current,
           duration: 1.year
         )
       end
 
-      def self.attribute(attr_name)
-      end
+      def self.attribute(attr_name); end
     end
   end
 
