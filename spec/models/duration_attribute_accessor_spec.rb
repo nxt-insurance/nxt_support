@@ -101,4 +101,75 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
       end
     end
   end
+
+  describe '.validates_durations' do
+    subject(:klass) do
+      Class.new do
+        include ActiveModel::Model
+        include NxtSupport::DurationAttributeAccessor
+
+        attr_accessor :class_duration, :topic_duration
+
+        validates_durations :class_duration
+      end
+    end
+
+    context 'when the value is a valid ISO8601 duration string' do
+      it 'does not add an error' do
+        record = klass.new(class_duration: 'PT1H')
+        expect(record).to be_valid
+      end
+    end
+
+    context 'when the value is an invalid string' do
+      it 'adds an error with the invalid value in the message' do
+        record = klass.new(class_duration: 'not_a_duration')
+        expect(record).not_to be_valid
+        expect(record.errors[:class_duration]).to include('not_a_duration is not a valid iso8601 duration.')
+      end
+    end
+
+    context 'with allow_nil: true' do
+      subject(:klass) do
+        Class.new do
+          include ActiveModel::Model
+          include NxtSupport::DurationAttributeAccessor
+
+          attr_accessor :class_duration
+
+          validates_durations :class_duration, allow_nil: true
+        end
+      end
+
+      it 'does not add an error for nil' do
+        record = klass.new(class_duration: nil)
+        expect(record).to be_valid
+      end
+
+      it 'still adds an error for an invalid string' do
+        record = klass.new(class_duration: 'not_a_duration')
+        expect(record).not_to be_valid
+      end
+    end
+
+    context 'with multiple attributes' do
+      subject(:klass) do
+        Class.new do
+          include ActiveModel::Model
+          include NxtSupport::DurationAttributeAccessor
+
+          attr_accessor :class_duration, :topic_duration
+
+          validates_durations :class_duration, :topic_duration
+        end
+      end
+
+      it 'validates all specified attributes' do
+        record = klass.new(class_duration: 'not_valid', topic_duration: 'also_not_valid')
+        expect(record).not_to be_valid
+        expect(record.errors[:class_duration]).to be_present
+        expect(record.errors[:topic_duration]).to be_present
+      end
+    end
+  end
 end
