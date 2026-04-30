@@ -1,3 +1,6 @@
+# v0.6.2 2026-04-30
+- Fix `.validate_duration` and `.validates_durations` when used in combination with `duration_attribute_accessor`
+
 # v0.6.1 2026-04-30
 - Added `.validate_duration` and `.validates_durations` to `NxtSupport::DurationAttributeAccessor`
 
