@@ -65,7 +65,7 @@ module NxtSupport
     def is_valid_iso8601_duration?(string)
       ActiveSupport::Duration.parse(string)
       true
-    rescue ActiveSupport::Duration::ISO8601Parser::ParsingError
+    rescue ActiveSupport::Duration::ISO8601Parser::ParsingError, TypeError
       false
     end
   end

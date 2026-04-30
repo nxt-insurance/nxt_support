@@ -129,6 +129,33 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
       end
     end
 
+    context 'when the value is nil and allow_nil is not set' do
+      it 'adds an error' do
+        record = klass.new(class_duration: nil)
+        expect(record).not_to be_valid
+        expect(record.errors[:class_duration]).to include('is not a valid iso8601 duration.')
+      end
+    end
+
+    context 'when the value is nil and allow_nil is false' do
+      subject(:klass) do
+        Class.new do
+          include ActiveModel::Model
+          include NxtSupport::DurationAttributeAccessor
+
+          attr_accessor :class_duration
+
+          validates_durations :class_duration, allow_nil: false
+        end
+      end
+
+      it 'adds an error' do
+        record = klass.new(class_duration: nil)
+        expect(record).not_to be_valid
+        expect(record.errors[:class_duration]).to include('is not a valid iso8601 duration.')
+      end
+    end
+
     context 'with allow_nil: true' do
       subject(:klass) do
         Class.new do
