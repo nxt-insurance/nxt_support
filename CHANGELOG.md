@@ -1,3 +1,6 @@
+# v0.6.1 2026-04-30
+- Added `.validate_duration` and `.validates_durations` to `NxtSupport::DurationAttributeAccessor`
+
 # v0.6.0 2024-09-27
 - Added `NxtSupport::Uuid`
 

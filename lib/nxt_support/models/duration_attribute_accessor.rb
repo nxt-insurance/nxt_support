@@ -19,6 +19,16 @@ module NxtSupport
           define_duration_attribute_writer(attr_name)
         end
       end
+      
+      def validates_durations(*attrs, **opts)
+        validates_each(*attrs, **opts) do |record, attr, value|
+          record.errors.add attr, "is not a valid iso8601 duration." unless record.is_valid_iso8601_duration?(value)
+        end
+      end
+      
+      def validates_duration(attr, **opts)
+        validates_durations(attr, **opts)
+      end
 
       private
 
@@ -55,7 +65,7 @@ module NxtSupport
     def is_valid_iso8601_duration?(string)
       ActiveSupport::Duration.parse(string)
       true
-    rescue ActiveSupport::Duration::ISO8601Parser::ParsingError
+    rescue ActiveSupport::Duration::ISO8601Parser::ParsingError, TypeError
       false
     end
   end
