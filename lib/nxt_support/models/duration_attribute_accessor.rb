@@ -22,7 +22,7 @@ module NxtSupport
       
       def validates_durations(*attrs, **opts)
         validates_each *attrs, **opts do |record, attr, value|
-          record.errors.add attr, "#{value} is not a valid iso8601 duration." unless record.is_valid_iso8601_duration?(value)
+          record.errors.add attr, "is not a valid iso8601 duration." unless record.is_valid_iso8601_duration?(value)
         end
       end
       

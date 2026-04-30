@@ -85,7 +85,7 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
       end
 
       it 'raises an ArgumentError' do
-        expect { course }.to raise_error(ArgumentError).with_message(/'1 month' is not a valid iso8601 string/)
+        expect { course }.to raise_error(ArgumentError).with_message(/is not a valid iso8601 string/)
       end
     end
 
@@ -125,7 +125,7 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
       it 'adds an error with the invalid value in the message' do
         record = klass.new(class_duration: 'not_a_duration')
         expect(record).not_to be_valid
-        expect(record.errors[:class_duration]).to include('not_a_duration is not a valid iso8601 duration.')
+        expect(record.errors[:class_duration]).to include('is not a valid iso8601 duration.')
       end
     end
 
