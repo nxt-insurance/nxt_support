@@ -198,5 +198,58 @@ RSpec.describe NxtSupport::DurationAttributeAccessor do
         expect(record.errors[:topic_duration]).to be_present
       end
     end
+
+    context 'when using duration_attribute_accessor for the fields' do
+      subject(:klass) do
+        Class.new(ActiveRecord::Base) do
+          self.table_name = 'courses'
+          include NxtSupport::DurationAttributeAccessor
+
+          duration_attribute_accessor :class_duration, :topic_duration
+
+          validates_durations :class_duration, :topic_duration
+        end
+      end
+
+      context 'when the value is an ActiveSupport::Duration' do
+        it 'does not add an error' do
+          record = klass.new(class_duration: 1.hour, topic_duration: 1.month)
+          expect(record).to be_valid
+        end
+      end
+
+      context 'when the value is a valid ISO8601 duration string' do
+        it 'does not add an error' do
+          record = klass.new(class_duration: 'PT1H', topic_duration: 'P1M')
+          expect(record).to be_valid
+        end
+      end
+
+      context 'when the value is nil and allow_nil is not set' do
+        it 'adds an error' do
+          record = klass.new(class_duration: nil)
+          expect(record).not_to be_valid
+          expect(record.errors[:class_duration]).to include('is not a valid iso8601 duration.')
+        end
+      end
+
+      context 'with allow_nil: true' do
+        subject(:klass) do
+          Class.new(ActiveRecord::Base) do
+            self.table_name = 'courses'
+            include NxtSupport::DurationAttributeAccessor
+
+            duration_attribute_accessor :class_duration
+
+            validates_durations :class_duration, allow_nil: true
+          end
+        end
+
+        it 'does not add an error for nil' do
+          record = klass.new(class_duration: nil)
+          expect(record).to be_valid
+        end
+      end
+    end
   end
 end
