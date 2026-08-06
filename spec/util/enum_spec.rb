@@ -26,4 +26,16 @@ RSpec.describe NxtSupport::Enum do
       expect(subject.lütfi).to eq('Lütfi')
     end
   end
+
+  describe '#strings' do
+    it 'returns all values' do
+      expect(subject.strings).to eq(['Nils Sommer', 'Rapha BIG Dog', 'Lütfi'])
+    end
+  end
+
+  describe '#symbols' do
+    it 'returns all values as symbols' do
+      expect(subject.symbols).to eq([:'Nils Sommer', :'Rapha BIG Dog', :'Lütfi'])
+    end
+  end
 end
