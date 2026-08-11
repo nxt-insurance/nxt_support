@@ -125,7 +125,7 @@ RSpec.describe NxtSupport::Crystalizer do
           described_class.new(collection: collection, on_ambiguity: custom_handler).call
         end
 
-        # Testing with different methods with different excepted outcomes just so
+        # Testing with different methods with different expected outcomes just so
         # the test isn't tautological.
 
         context 'with #max' do
