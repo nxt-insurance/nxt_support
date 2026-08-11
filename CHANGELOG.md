@@ -1,3 +1,6 @@
+# v0.6.3 2026-08-11
+- Fix `Crystalizer#call` to return the resolved value from a custom `on_ambiguity` handler instead of always returning `unique_values.first`
+
 # v0.6.2 2026-04-30
 - Fix `.validate_duration` and `.validates_durations` when used in combination with `duration_attribute_accessor`
 

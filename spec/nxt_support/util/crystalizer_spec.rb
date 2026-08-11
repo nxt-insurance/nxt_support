@@ -105,16 +105,44 @@ RSpec.describe NxtSupport::Crystalizer do
       end
     end
 
-    context 'custom on_ambiquity handler' do
+    context 'custom on_ambiguity handler' do
       let(:collection) { %w[anthony aki] }
-      let(:custom_handler) { -> { raise ZeroDivisionError, 'oh oh' } }
 
-      subject do
-        described_class.new(collection:, on_ambiguity: custom_handler).call
+      context 'when the handler raises' do
+        let(:custom_handler) { -> { raise ZeroDivisionError, 'oh oh' } }
+
+        subject do
+          described_class.new(collection: collection, on_ambiguity: custom_handler).call
+        end
+
+        it 'raises an error' do
+          expect { subject }.to raise_error(ZeroDivisionError)
+        end
       end
 
-      it 'raises an error' do
-        expect { subject }.to raise_error(ZeroDivisionError)
+      context 'when the handler resolves the ambiguity' do
+        subject do
+          described_class.new(collection: collection, on_ambiguity: custom_handler).call
+        end
+
+        # Testing with different methods with different expected outcomes just so
+        # the test isn't tautological.
+
+        context 'with #max' do
+          let(:custom_handler) { ->(values) { values.max } }
+
+          it 'returns the resolved value' do
+            expect(subject).to eq('anthony')
+          end
+        end
+
+        context 'with #last' do
+          let(:custom_handler) { ->(values) { values.last } }
+
+          it 'returns the resolved value' do
+            expect(subject).to eq('aki')
+          end
+        end
       end
     end
   end
