@@ -7,8 +7,9 @@ module NxtSupport
     attr_init :collection, on_ambiguity: -> { default_ambiguity_handler }, with: :itself
 
     def call
-      ensure_unanimity
-      unique_values.first
+      return unique_values.first if unique_values.size == 1
+
+      on_ambiguity.arity == 1 ? on_ambiguity.call(resolved_collection) : on_ambiguity.call
     end
 
     private
@@ -23,12 +24,6 @@ module NxtSupport
 
     def default_ambiguity_handler
       ->(collection) { raise Error, "Values in collection are not unanimous: #{collection}" }
-    end
-
-    def ensure_unanimity
-      return if unique_values.size == 1
-
-      on_ambiguity.arity == 1 ? on_ambiguity.call(resolved_collection) : on_ambiguity.call
     end
   end
 end
