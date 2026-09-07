@@ -24,6 +24,14 @@ module NxtSupport
       store
     end
 
+    def strings
+      values
+    end
+
+    def symbols
+      values.map(&:to_sym)
+    end
+
     delegate_missing_to :to_h
 
     private
