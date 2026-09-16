@@ -360,6 +360,16 @@ NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
 ```
 
+#### NxtSupport::Iban
+
+`NxtSupport::Iban` normalizes IBANs into the form payment providers and comparisons expect: upcased, with all
+whitespace removed. It does not validate the IBAN — anything that is not a string is returned unchanged.
+
+```ruby
+NxtSupport::Iban.normalize('de89 3704 0044 0532 0130 00') # => "DE89370400440532013000"
+NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00').normalize # => "DE89370400440532013000"
+```
+
 ### NxtSupport::Console.rake_cli_options
 A simple utility that uses Ruby's [OptionParser](https://docs.ruby-lang.org/en/2.1.0/OptionParser.html)
 to make it easier to pass CLI options to Rake tasks.
