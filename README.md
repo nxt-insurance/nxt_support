@@ -61,6 +61,102 @@ class MyModel < ApplicationRecord
 end
 ```
 
+#### NxtSupport::EncryptedJsonAttrs
+
+This mixin builds on [Active Record Encryption](https://guides.rubyonrails.org/active_record_encryption.html) to encrypt JSON columns, either as a whole or only selected fields inside them. Both variants read the column back as `ActiveSupport::HashWithIndifferentAccess`.
+
+Your application has to configure Active Record Encryption first:
+
+```ruby
+config.active_record.encryption.primary_key = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY')
+config.active_record.encryption.deterministic_key = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY')
+config.active_record.encryption.key_derivation_salt = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT')
+```
+
+`encrypts_json_entirely` encrypts the whole column. It is plain `encrypts` on top of `NxtSupport::IndifferentJsonType`, so all `encrypts` options (`deterministic:`, `key_provider:`, ...) are accepted. Nothing inside the column is queryable afterwards, and Rails recommends a `text` column for encrypted attributes.
+
+It does work on an existing `json` or `jsonb` column, because the default message serializer emits the ciphertext envelope as JSON (`{"p":"...","h":{...}}`), which PostgreSQL accepts as a valid document. Treat that as a transitional state rather than a design: the column no longer holds meaningful JSON, so `data->>'key'` returns `NULL` and indexes on it are useless, PostgreSQL parses and normalizes the envelope on every read and write for nothing, and it only holds as long as the message serializer produces JSON. A MessagePack serializer or a binary encryptor would break it. Plan to change the column type to `text` once the data is encrypted.
+
+```ruby
+class Application < ApplicationRecord
+  include NxtSupport::EncryptedJsonAttrs
+
+  encrypts_json_entirely :data
+end
+
+application = Application.create!(data: { payment: { bank_data: { iban: 'DE89370400440532013000' } } })
+application.data.dig(:payment, :bank_data, :iban) # => "DE89370400440532013000"
+```
+
+`encrypts_json_attrs` encrypts only the leaves at the given paths and leaves the rest of the JSON as it is, so the other keys stay queryable in SQL. Paths are [JSONPath](https://goessner.net/articles/JsonPath/) expressions evaluated with the [`jsonpath`](https://github.com/joshbuddy/jsonpath) gem. Only string leaves are encrypted, an already encrypted leaf is left alone, and plaintext leaves are read transparently, so existing rows keep working until they are re-saved.
+
+```ruby
+class Application::PaymentMethod < ApplicationRecord
+  include NxtSupport::EncryptedJsonAttrs
+
+  encrypts_json_attrs column: :data, paths: %w[$.iban], deterministic: true
+end
+
+payment_method = Application::PaymentMethod.create!(data: { iban: 'DE89370400440532013000', account_holder: 'John' })
+payment_method.data[:iban] # => "DE89370400440532013000"
+```
+
+More path examples:
+
+```ruby
+encrypts_json_attrs column: :data, paths: %w[$.payment.bank_data.iban]
+encrypts_json_attrs column: :data, paths: %w[$.accounts[*].iban]
+encrypts_json_attrs column: :data, paths: %w[$..iban]
+encrypts_json_attrs column: :data, paths: ["$.accounts[?(@.type == 'sepa')].iban"]
+```
+
+With `deterministic: true` the ciphertext is stable, so records can be found by the value of an encrypted field. `where_encrypted_json` resolves the same path with `jsonb_path_query` and therefore requires a PostgreSQL `jsonb` column. `encrypted_json_value_for` returns the ciphertext to use in your own queries.
+
+```ruby
+Application::PaymentMethod.where_encrypted_json(:data, path: '$.iban', value: 'DE89370400440532013000')
+Application::PaymentMethod.where_encrypted_json(:data, path: '$..iban', value: 'DE89370400440532013000')
+Application::PaymentMethod.encrypted_json_value_for(:data, 'DE89370400440532013000') # => "{\"p\":\"...\",\"h\":{...}}"
+```
+
+Both variants default the attribute to an empty `HashWithIndifferentAccess`, which can be changed with `default:`.
+
+##### Migrating from `indifferently_accessible_json_attrs`
+
+`indifferently_accessible_json_attrs` on a `json` or `jsonb` column stores the value double encoded, as a JSON string literal that contains JSON. `NxtSupport::IndifferentJsonType` (and with it both encryption variants) decodes such rows transparently, so a column can be switched over without a data migration. Re-saving the records encrypts them; with `config.active_record.encryption.support_unencrypted_data = true` unencrypted rows stay readable in the meantime when using `encrypts_json_entirely`.
+
+`NxtSupport::IndifferentJsonType` can also be used on its own as a drop in replacement for `indifferently_accessible_json_attrs`:
+
+```ruby
+attribute :data, NxtSupport::IndifferentJsonType.new
+```
+
+##### Testing encrypted columns
+
+`nxt_support/rspec` ships a helper and two matchers that assert on the value as it is stored in the database, so a spec can prove what is encrypted without writing SQL or knowing the database's JSON functions.
+
+```ruby
+# spec_helper.rb
+require 'nxt_support/rspec'
+
+RSpec.configure do |config|
+  config.include NxtSupport::RSpec::Encryption
+end
+```
+
+`raw_column_value(record, :column)` returns the column exactly as stored, bypassing every attribute type. `be_encrypted` passes for an Active Record encryption envelope and nothing else. `be_encrypted_at(path)` parses the value as JSON, resolves the JSONPath and passes if it matches at least one leaf and every matched leaf is an envelope. Negated, it passes if every matched leaf is plaintext. A path that matches nothing fails in both directions.
+
+```ruby
+raw = raw_column_value(application, :data)
+expect(raw).to be_encrypted
+
+raw = raw_column_value(payment_method, :data)
+expect(raw).not_to be_encrypted
+expect(raw).to be_encrypted_at('$.iban')
+expect(raw).not_to be_encrypted_at('$.account_holder')
+```
+
+The two matchers are not interchangeable. A wholly encrypted column is a single envelope, so `be_encrypted_at` finds none of the original keys in it. A partially encrypted column is still a JSON document, so `be_encrypted` fails on it.
+
 #### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.
