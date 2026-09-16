@@ -1,3 +1,6 @@
+# v0.8.0 2026-09-16
+- Added `NxtSupport::EncryptedJsonAttrs`, `NxtSupport::IndifferentJsonType` and `NxtSupport::EncryptedJsonPathsType`
+
 # v0.7.0 2026-09-16
 - Added `NxtSupport::Iban`
 
