@@ -1,7 +1,7 @@
 RSpec.describe NxtSupport::EncryptedJsonPathsType do
   subject(:type) { described_class.new(*paths, deterministic: deterministic) }
 
-  let(:paths) { %w[iban] }
+  let(:paths) { %w[$.iban] }
   let(:deterministic) { false }
   let(:iban) { 'DE89370400440532013000' }
   let(:encryptor) { ActiveRecord::Encryption.encryptor }
@@ -58,7 +58,7 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
     end
 
     context 'with nested and array paths' do
-      let(:paths) { %w[payment.bank_data.iban $.accounts[*].iban] }
+      let(:paths) { %w[$.payment.bank_data.iban $.accounts[*].iban] }
 
       it 'encrypts leaves inside nested hashes and inside arrays' do
         serialized = type.serialize(
@@ -132,17 +132,6 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
 
       expect(type.changed_in_place?(serialized, { 'iban' => iban }.with_indifferent_access)).to be(false)
       expect(type.changed_in_place?(serialized, { 'iban' => 'DE02120300000000202051' }.with_indifferent_access)).to be(true)
-    end
-  end
-
-  describe '.normalize_path' do
-    it 'prefixes a bare key path with the root' do
-      expect(described_class.normalize_path('payment.bank_data.iban')).to eq('$.payment.bank_data.iban')
-      expect(described_class.normalize_path(:iban)).to eq('$.iban')
-    end
-
-    it 'leaves a json path untouched' do
-      expect(described_class.normalize_path('$..iban')).to eq('$..iban')
     end
   end
 

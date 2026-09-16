@@ -34,7 +34,7 @@ module NxtSupport
       private
 
       def sql_json_path(path)
-        EncryptedJsonPathsType.normalize_path(path).gsub('..', '.**.')
+        path.gsub('..', '.**.')
       end
     end
   end

@@ -4,13 +4,8 @@ module NxtSupport
   class EncryptedJsonPathsType < IndifferentJsonType
     attr_reader :paths, :scheme
 
-    def self.normalize_path(path)
-      path = path.to_s
-      path.start_with?('$') ? path : "$.#{path}"
-    end
-
     def initialize(*paths, deterministic: false)
-      @paths = paths.map { |path| self.class.normalize_path(path) }
+      @paths = paths
       @scheme = ActiveRecord::Encryption::Scheme.new(deterministic: deterministic)
       super()
     end

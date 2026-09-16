@@ -86,13 +86,13 @@ application = Application.create!(data: { payment: { bank_data: { iban: 'DE89370
 application.data.dig(:payment, :bank_data, :iban) # => "DE89370400440532013000"
 ```
 
-`encrypts_json_attrs` encrypts only the leaves at the given paths and leaves the rest of the JSON as it is, so the other keys stay queryable in SQL. Paths are [JSONPath](https://goessner.net/articles/JsonPath/) expressions evaluated with the [`jsonpath`](https://github.com/joshbuddy/jsonpath) gem. A bare key path such as `payment.bank_data.iban` is shorthand for `$.payment.bank_data.iban`. Only string leaves are encrypted, an already encrypted leaf is left alone, and plaintext leaves are read transparently, so existing rows keep working until they are re-saved.
+`encrypts_json_attrs` encrypts only the leaves at the given paths and leaves the rest of the JSON as it is, so the other keys stay queryable in SQL. Paths are [JSONPath](https://goessner.net/articles/JsonPath/) expressions evaluated with the [`jsonpath`](https://github.com/joshbuddy/jsonpath) gem. Only string leaves are encrypted, an already encrypted leaf is left alone, and plaintext leaves are read transparently, so existing rows keep working until they are re-saved.
 
 ```ruby
 class Application::PaymentMethod < ApplicationRecord
   include NxtSupport::EncryptedJsonAttrs
 
-  encrypts_json_attrs column: :data, paths: %w[iban], deterministic: true
+  encrypts_json_attrs column: :data, paths: %w[$.iban], deterministic: true
 end
 
 payment_method = Application::PaymentMethod.create!(data: { iban: 'DE89370400440532013000', account_holder: 'John' })
@@ -102,7 +102,7 @@ payment_method.data[:iban] # => "DE89370400440532013000"
 More path examples:
 
 ```ruby
-encrypts_json_attrs column: :data, paths: %w[payment.bank_data.iban]
+encrypts_json_attrs column: :data, paths: %w[$.payment.bank_data.iban]
 encrypts_json_attrs column: :data, paths: %w[$.accounts[*].iban]
 encrypts_json_attrs column: :data, paths: %w[$..iban]
 encrypts_json_attrs column: :data, paths: ["$.accounts[?(@.type == 'sepa')].iban"]
@@ -111,7 +111,7 @@ encrypts_json_attrs column: :data, paths: ["$.accounts[?(@.type == 'sepa')].iban
 With `deterministic: true` the ciphertext is stable, so records can be found by the value of an encrypted field. `where_encrypted_json` resolves the same path with `jsonb_path_query` and therefore requires a PostgreSQL `jsonb` column. `encrypted_json_value_for` returns the ciphertext to use in your own queries.
 
 ```ruby
-Application::PaymentMethod.where_encrypted_json(:data, path: 'iban', value: 'DE89370400440532013000')
+Application::PaymentMethod.where_encrypted_json(:data, path: '$.iban', value: 'DE89370400440532013000')
 Application::PaymentMethod.where_encrypted_json(:data, path: '$..iban', value: 'DE89370400440532013000')
 Application::PaymentMethod.encrypted_json_value_for(:data, 'DE89370400440532013000') # => "{\"p\":\"...\",\"h\":{...}}"
 ```

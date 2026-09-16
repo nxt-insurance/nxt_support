@@ -110,7 +110,7 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
 
         self.table_name = 'encrypted_payment_methods'
 
-        encrypts_json_attrs column: :data, paths: %w[iban], deterministic: true
+        encrypts_json_attrs column: :data, paths: %w[$.iban], deterministic: true
       end
     end
 
@@ -174,7 +174,7 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
     describe '.where_encrypted_json' do
       subject(:sql) { payment_method_class.where_encrypted_json(:data, path: path, value: iban).to_sql }
 
-      let(:path) { 'iban' }
+      let(:path) { '$.iban' }
 
       it 'matches the deterministic ciphertext at the json path' do
         expect(sql).to include(%(jsonb_path_query("encrypted_payment_methods"."data", '$.iban')))
@@ -204,7 +204,7 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
 
             self.table_name = 'encrypted_payment_methods'
 
-            encrypts_json_attrs column: :data, paths: %w[iban]
+            encrypts_json_attrs column: :data, paths: %w[$.iban]
           end
         end
 
