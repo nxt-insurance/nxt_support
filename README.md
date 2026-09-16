@@ -360,6 +360,33 @@ NxtSupport::BirthDate.new(date: '1990-08-08').to_age # => 30
 NxtSupport::BirthDate.new(date: '1990-08-08').to_age_in_months # => 361
 ```
 
+#### NxtSupport::Iban
+
+`NxtSupport::Iban` normalizes IBANs into the form payment providers and comparisons expect: upcased, with all
+whitespace removed. It does not validate the IBAN — anything that is not a string is returned unchanged.
+
+```ruby
+NxtSupport::Iban.normalize('de89 3704 0044 0532 0130 00') # => "DE89370400440532013000"
+NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00').normalize # => "DE89370400440532013000"
+```
+
+`#to_s`, `#country_code` and `#last4` all read from the normalized form, so they give the same answer no matter how
+the IBAN was written. `#to_s` returns an empty string for a missing IBAN, while `#country_code` and `#last4` return
+`nil` rather than an empty string.
+
+```ruby
+iban = NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00')
+
+iban.to_s          # => "DE89370400440532013000"
+iban.country_code  # => "DE"
+iban.last4         # => "3000"
+iban.redacted_s    # => "DE****3000"
+```
+
+Use `#redacted_s` wherever an IBAN would otherwise reach a log line, an error message or a support tool. It keeps the
+country code and the last four characters and masks everything between them. When the IBAN is short enough that the
+last four characters would give the rest away, they are masked too and only the country code remains.
+
 ### NxtSupport::Console.rake_cli_options
 A simple utility that uses Ruby's [OptionParser](https://docs.ruby-lang.org/en/2.1.0/OptionParser.html)
 to make it easier to pass CLI options to Rake tasks.

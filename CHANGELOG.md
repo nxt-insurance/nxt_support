@@ -1,3 +1,6 @@
+# v0.7.0 2026-09-16
+- Added `NxtSupport::Iban`
+
 # v0.6.3 2026-08-11
 - Fix `Crystalizer#call` to return the resolved value from a custom `on_ambiguity` handler instead of always returning `unique_values.first`
 
