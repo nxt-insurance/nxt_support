@@ -130,6 +130,33 @@ Both variants default the attribute to an empty `HashWithIndifferentAccess`, whi
 attribute :data, NxtSupport::IndifferentJsonType.new
 ```
 
+##### Testing encrypted columns
+
+`nxt_support/rspec` ships a helper and two matchers that assert on the value as it is stored in the database, so a spec can prove what is encrypted without writing SQL or knowing the database's JSON functions.
+
+```ruby
+# spec_helper.rb
+require 'nxt_support/rspec'
+
+RSpec.configure do |config|
+  config.include NxtSupport::RSpec::Encryption
+end
+```
+
+`raw_column_value(record, :column)` returns the column exactly as stored, bypassing every attribute type. `be_encrypted` passes for an Active Record encryption envelope and nothing else. `be_encrypted_at(path)` parses the value as JSON, resolves the JSONPath and passes if it matches at least one leaf and every matched leaf is an envelope. Negated, it passes if every matched leaf is plaintext. A path that matches nothing fails in both directions.
+
+```ruby
+raw = raw_column_value(application, :data)
+expect(raw).to be_encrypted
+
+raw = raw_column_value(payment_method, :data)
+expect(raw).not_to be_encrypted
+expect(raw).to be_encrypted_at('$.iban')
+expect(raw).not_to be_encrypted_at('$.account_holder')
+```
+
+The two matchers are not interchangeable. A wholly encrypted column is a single envelope, so `be_encrypted_at` finds none of the original keys in it. A partially encrypted column is still a JSON document, so `be_encrypted` fails on it.
+
 #### NxtSupport::SafelyFindOrCreateable
 
 The `NxtSupport::Models::SafelyFindOrCreateable` concern is aimed at ActiveRecord models with a uniqueness database constraint. If you use `find_or_create_by` from ActiveRecord, it can happen that the `find_by` call returns `nil` (because no record for the given conditions exists), but in the small timeframe between the `find_by` and the `create` call, another thread inserts a record, so that the `create` call raises an error.

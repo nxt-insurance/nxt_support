@@ -1,6 +1,5 @@
 RSpec.describe NxtSupport::EncryptedJsonAttrs do
   let(:iban) { 'DE89370400440532013000' }
-  let(:encryptor) { ActiveRecord::Encryption.encryptor }
   let(:connection) { ActiveRecord::Base.connection }
 
   let!(:db_schema) do
@@ -15,10 +14,6 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
         t.json :data
       end
     end
-  end
-
-  def raw_column(sql, id)
-    connection.select_value(ActiveRecord::Base.sanitize_sql_array([sql, id]))
   end
 
   def update_raw_column(table, value, id)
@@ -39,9 +34,9 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
     let(:document) { document_class.create!(data: { payment: { bank_data: { iban: iban } } }) }
 
     it 'stores the whole column as an encrypted envelope' do
-      raw = raw_column('SELECT data FROM encrypted_documents WHERE id = ?', document.id)
+      raw = raw_column_value(document, :data)
 
-      expect(encryptor.encrypted?(raw)).to be(true)
+      expect(raw).to be_encrypted
       expect(raw).not_to include(iban)
     end
 
@@ -120,14 +115,12 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
     let(:payment_method) { payment_method_class.create!(data: { iban: iban, account_holder_first_name: 'John' }) }
 
     it 'stores only the configured field encrypted' do
-      raw_iban = raw_column("SELECT json_extract(data, '$.iban') FROM encrypted_payment_methods WHERE id = ?", payment_method.id)
-      raw_first_name = raw_column(
-        "SELECT json_extract(data, '$.account_holder_first_name') FROM encrypted_payment_methods WHERE id = ?", payment_method.id
-      )
+      raw = raw_column_value(payment_method, :data)
 
-      expect(encryptor.encrypted?(raw_iban)).to be(true)
-      expect(raw_iban).not_to include(iban)
-      expect(raw_first_name).to eq('John')
+      expect(raw).not_to be_encrypted
+      expect(raw).to be_encrypted_at('$.iban')
+      expect(raw).not_to be_encrypted_at('$.account_holder_first_name')
+      expect(raw).not_to include(iban)
     end
 
     it 'reads the field back decrypted' do
@@ -168,9 +161,9 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
 
     describe '.encrypted_json_value_for' do
       it 'returns the ciphertext that is stored for the field' do
-        raw_iban = raw_column("SELECT json_extract(data, '$.iban') FROM encrypted_payment_methods WHERE id = ?", payment_method.id)
+        stored_iban = JSON.parse(raw_column_value(payment_method, :data)).fetch('iban')
 
-        expect(payment_method_class.encrypted_json_value_for(:data, iban)).to eq(raw_iban)
+        expect(payment_method_class.encrypted_json_value_for(:data, iban)).to eq(stored_iban)
       end
     end
 

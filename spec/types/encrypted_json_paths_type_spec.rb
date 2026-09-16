@@ -4,7 +4,6 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
   let(:paths) { %w[$.iban] }
   let(:deterministic) { false }
   let(:iban) { 'DE89370400440532013000' }
-  let(:encryptor) { ActiveRecord::Encryption.encryptor }
 
   def stored_leaf(serialized, *keys)
     JSON.parse(serialized).dig(*keys)
@@ -14,21 +13,17 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
     it 'encrypts the configured leaf and leaves the rest untouched' do
       serialized = type.serialize({ iban: iban, account_holder_first_name: 'John' })
 
-      expect(encryptor.encrypted?(stored_leaf(serialized, 'iban'))).to be(true)
-      expect(stored_leaf(serialized, 'iban')).not_to include(iban)
+      expect(serialized).to be_encrypted_at('$.iban')
+      expect(serialized).not_to include(iban)
       expect(stored_leaf(serialized, 'account_holder_first_name')).to eq('John')
     end
 
     it 'encrypts leaves given with string keys' do
-      serialized = type.serialize({ 'iban' => iban })
-
-      expect(encryptor.encrypted?(stored_leaf(serialized, 'iban'))).to be(true)
+      expect(type.serialize({ 'iban' => iban })).to be_encrypted_at('$.iban')
     end
 
     it 'encrypts leaves given with symbol keys' do
-      serialized = type.serialize({ iban: iban })
-
-      expect(encryptor.encrypted?(stored_leaf(serialized, 'iban'))).to be(true)
+      expect(type.serialize({ iban: iban })).to be_encrypted_at('$.iban')
     end
 
     it 'does not mutate the given value' do
@@ -65,9 +60,9 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
           { payment: { bank_data: { iban: iban, bic: 'COBADEFF' } }, accounts: [{ iban: iban }, { iban: nil }] }
         )
 
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'payment', 'bank_data', 'iban'))).to be(true)
-        expect(stored_leaf(serialized, 'payment', 'bank_data', 'bic')).to eq('COBADEFF')
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'accounts', 0, 'iban'))).to be(true)
+        expect(serialized).to be_encrypted_at('$.payment.bank_data.iban')
+        expect(serialized).not_to be_encrypted_at('$.payment.bank_data.bic')
+        expect(serialized).to be_encrypted_at('$.accounts[0].iban')
         expect(stored_leaf(serialized, 'accounts', 1, 'iban')).to be_nil
       end
     end
@@ -78,9 +73,7 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
       it 'encrypts every leaf with that key at any depth' do
         serialized = type.serialize({ iban: iban, payment: { bank_data: { iban: iban } }, accounts: [{ iban: iban }] })
 
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'iban'))).to be(true)
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'payment', 'bank_data', 'iban'))).to be(true)
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'accounts', 0, 'iban'))).to be(true)
+        expect(serialized).to be_encrypted_at('$..iban')
       end
     end
 
@@ -90,7 +83,7 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
       it 'encrypts only the matching elements' do
         serialized = type.serialize({ accounts: [{ type: 'sepa', iban: iban }, { type: 'paypal', iban: 'not-an-iban' }] })
 
-        expect(encryptor.encrypted?(stored_leaf(serialized, 'accounts', 0, 'iban'))).to be(true)
+        expect(serialized).to be_encrypted_at('$.accounts[0].iban')
         expect(stored_leaf(serialized, 'accounts', 1, 'iban')).to eq('not-an-iban')
       end
     end
