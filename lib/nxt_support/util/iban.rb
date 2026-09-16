@@ -5,6 +5,9 @@ module NxtSupport
     include NxtInit
     attr_init :iban
 
+    VISIBLE_CHARACTERS = 4
+    MASK = '****'.freeze
+
     def self.normalize(iban)
       new(iban: iban).normalize
     end
@@ -24,7 +27,16 @@ module NxtSupport
     end
 
     def last4
-      to_s.last(4).presence
+      to_s.last(VISIBLE_CHARACTERS).presence
+    end
+
+    def redacted_s
+      normalized = to_s
+
+      return '' if normalized.empty?
+      return MASK if normalized.length <= VISIBLE_CHARACTERS
+
+      "#{MASK}#{last4}"
     end
   end
 end

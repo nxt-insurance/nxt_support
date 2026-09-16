@@ -147,6 +147,56 @@ RSpec.describe NxtSupport::Iban do
     end
   end
 
+  describe '#redacted_s' do
+    subject { described_class.new(iban: iban).redacted_s }
+
+    context 'when the IBAN is written with lower-case letters and whitespace' do
+      let(:iban) { ' de89 3704 0044 0532 0130 00 ' }
+
+      it { is_expected.to eq('****3000') }
+    end
+
+    context 'when the IBAN is already normalized' do
+      let(:iban) { 'DE89370400440532013000' }
+
+      it { is_expected.to eq('****3000') }
+    end
+
+    context 'when the IBAN is exactly as long as the visible part' do
+      let(:iban) { 'DE89' }
+
+      it 'masks the whole IBAN rather than revealing all of it' do
+        is_expected.to eq('****')
+      end
+    end
+
+    context 'when the IBAN is shorter than the visible part' do
+      let(:iban) { 'DE8' }
+
+      it 'masks the whole IBAN rather than revealing all of it' do
+        is_expected.to eq('****')
+      end
+    end
+
+    context 'when the IBAN is nil' do
+      let(:iban) { nil }
+
+      it { is_expected.to eq('') }
+    end
+
+    context 'when the IBAN is an empty string' do
+      let(:iban) { '' }
+
+      it { is_expected.to eq('') }
+    end
+
+    it 'never contains the IBAN it redacts' do
+      iban = 'DE89370400440532013000'
+
+      expect(described_class.new(iban: iban).redacted_s).not_to include(iban)
+    end
+  end
+
   describe '.normalize' do
     it 'normalizes without building an instance first' do
       expect(described_class.normalize(' de89 3704 0044 0532 0130 00 ')).to eq('DE89370400440532013000')
