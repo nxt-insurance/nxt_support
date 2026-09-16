@@ -5,6 +5,7 @@ module NxtSupport
     include NxtInit
     attr_init :iban
 
+    COUNTRY_CODE_LENGTH = 2
     VISIBLE_CHARACTERS = 4
     MASK = '****'.freeze
 
@@ -23,7 +24,7 @@ module NxtSupport
     end
 
     def country_code
-      to_s.first(2).presence
+      to_s.first(COUNTRY_CODE_LENGTH).presence
     end
 
     def last4
@@ -34,9 +35,9 @@ module NxtSupport
       normalized = to_s
 
       return '' if normalized.empty?
-      return MASK if normalized.length <= VISIBLE_CHARACTERS
+      return "#{country_code}#{MASK}" if normalized.length <= COUNTRY_CODE_LENGTH + VISIBLE_CHARACTERS
 
-      "#{MASK}#{last4}"
+      "#{country_code}#{MASK}#{last4}"
     end
   end
 end

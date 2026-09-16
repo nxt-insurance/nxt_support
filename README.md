@@ -380,12 +380,12 @@ iban = NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00')
 iban.to_s          # => "DE89370400440532013000"
 iban.country_code  # => "DE"
 iban.last4         # => "3000"
-iban.redacted_s    # => "****3000"
+iban.redacted_s    # => "DE****3000"
 ```
 
-Use `#redacted_s` wherever an IBAN would otherwise reach a log line, an error message or a support tool. It masks
-everything but the last four characters, and masks those too when the IBAN is short enough that they would give the
-whole value away.
+Use `#redacted_s` wherever an IBAN would otherwise reach a log line, an error message or a support tool. It keeps the
+country code and the last four characters and masks everything between them. When the IBAN is short enough that the
+last four characters would give the rest away, they are masked too and only the country code remains.
 
 ### NxtSupport::Console.rake_cli_options
 A simple utility that uses Ruby's [OptionParser](https://docs.ruby-lang.org/en/2.1.0/OptionParser.html)

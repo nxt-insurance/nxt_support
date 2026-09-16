@@ -153,29 +153,47 @@ RSpec.describe NxtSupport::Iban do
     context 'when the IBAN is written with lower-case letters and whitespace' do
       let(:iban) { ' de89 3704 0044 0532 0130 00 ' }
 
-      it { is_expected.to eq('****3000') }
+      it { is_expected.to eq('DE****3000') }
     end
 
     context 'when the IBAN is already normalized' do
       let(:iban) { 'DE89370400440532013000' }
 
-      it { is_expected.to eq('****3000') }
+      it { is_expected.to eq('DE****3000') }
     end
 
-    context 'when the IBAN is exactly as long as the visible part' do
+    context 'when the IBAN is from another country' do
+      let(:iban) { 'GB33BUKB20201555555555' }
+
+      it { is_expected.to eq('GB****5555') }
+    end
+
+    context 'when the IBAN is one character longer than the visible parts' do
+      let(:iban) { 'DE89012' }
+
+      it { is_expected.to eq('DE****9012') }
+    end
+
+    context 'when the IBAN is exactly as long as the visible parts' do
+      let(:iban) { 'DE8901' }
+
+      it 'masks everything after the country code rather than revealing all of it' do
+        is_expected.to eq('DE****')
+      end
+    end
+
+    context 'when the IBAN is shorter than the visible parts' do
       let(:iban) { 'DE89' }
 
-      it 'masks the whole IBAN rather than revealing all of it' do
-        is_expected.to eq('****')
+      it 'masks everything after the country code rather than revealing all of it' do
+        is_expected.to eq('DE****')
       end
     end
 
-    context 'when the IBAN is shorter than the visible part' do
-      let(:iban) { 'DE8' }
+    context 'when the IBAN is shorter than the country code' do
+      let(:iban) { 'D' }
 
-      it 'masks the whole IBAN rather than revealing all of it' do
-        is_expected.to eq('****')
-      end
+      it { is_expected.to eq('D****') }
     end
 
     context 'when the IBAN is nil' do
