@@ -82,11 +82,14 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
     end
 
     context 'when unencrypted data is supported' do
-      around do |example|
-        ActiveRecord::Encryption.config.support_unencrypted_data = true
-        example.run
-      ensure
-        ActiveRecord::Encryption.config.support_unencrypted_data = false
+      let(:document_class) do
+        Class.new(ActiveRecord::Base) do
+          include NxtSupport::EncryptedJsonAttrs
+
+          self.table_name = 'encrypted_documents'
+
+          encrypts_json_entirely :data, support_unencrypted_data: true
+        end
       end
 
       it 'reads legacy plaintext rows' do
@@ -181,7 +184,7 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
         expect(sql).to include("#>> '{}' = '#{payment_method_class.encrypted_json_value_for(:data, iban)}'")
       end
 
-      context 'with a json path' do
+      context 'with an array wildcard path' do
         let(:path) { '$.accounts[*].iban' }
 
         it 'passes it through' do
@@ -208,7 +211,7 @@ RSpec.describe NxtSupport::EncryptedJsonAttrs do
           end
         end
 
-        it 'raises' do
+        it 'raises because a non deterministic ciphertext cannot be queried' do
           expect { sql }.to raise_error(ArgumentError, 'querying encrypted fields requires deterministic: true')
         end
       end

@@ -1,5 +1,6 @@
 # v0.8.0 2026-09-16
 - Added `NxtSupport::EncryptedJsonAttrs`, `NxtSupport::IndifferentJsonType` and `NxtSupport::EncryptedJsonPathsType`
+- Added `jsonpath` as a runtime dependency
 
 # v0.7.0 2026-09-16
 - Added `NxtSupport::Iban`

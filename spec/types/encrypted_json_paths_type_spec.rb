@@ -152,7 +152,7 @@ RSpec.describe NxtSupport::EncryptedJsonPathsType do
         expect(first).not_to eq(second)
       end
 
-      it 'raises' do
+      it 'raises because a non deterministic ciphertext cannot be queried' do
         expect { type.encrypt_for_query(iban) }.to raise_error(ArgumentError, 'querying encrypted fields requires deterministic: true')
       end
     end

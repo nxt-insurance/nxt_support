@@ -30,6 +30,10 @@ RSpec.describe NxtSupport::IndifferentJsonType do
     it 'raises for a json scalar that is not a hash or array' do
       expect { type.deserialize('"invalid value"') }.to raise_error(ArgumentError, "Cant deserialize 'invalid value'")
     end
+
+    it 'raises for a json string literal that looks like an object but is not valid json' do
+      expect { type.deserialize('"{not json"') }.to raise_error(ArgumentError, "Cant deserialize '{not json'")
+    end
   end
 
   describe '#cast' do
