@@ -75,6 +75,8 @@ config.active_record.encryption.key_derivation_salt = ENV.fetch('ACTIVE_RECORD_E
 
 `encrypts_json_entirely` encrypts the whole column. It is plain `encrypts` on top of `NxtSupport::IndifferentJsonType`, so all `encrypts` options (`deterministic:`, `key_provider:`, ...) are accepted. Nothing inside the column is queryable afterwards, and Rails recommends a `text` column for encrypted attributes.
 
+It does work on an existing `json` or `jsonb` column, because the default message serializer emits the ciphertext envelope as JSON (`{"p":"...","h":{...}}`), which PostgreSQL accepts as a valid document. Treat that as a transitional state rather than a design: the column no longer holds meaningful JSON, so `data->>'key'` returns `NULL` and indexes on it are useless, PostgreSQL parses and normalizes the envelope on every read and write for nothing, and it only holds as long as the message serializer produces JSON. A MessagePack serializer or a binary encryptor would break it. Plan to change the column type to `text` once the data is encrypted.
+
 ```ruby
 class Application < ApplicationRecord
   include NxtSupport::EncryptedJsonAttrs
