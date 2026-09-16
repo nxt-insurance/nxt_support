@@ -14,5 +14,17 @@ module NxtSupport
 
       iban.upcase.gsub(/\s+/, '')
     end
+
+    def to_s
+      normalize.to_s
+    end
+
+    def country_code
+      to_s.first(2).presence
+    end
+
+    def last4
+      to_s.last(4).presence
+    end
   end
 end

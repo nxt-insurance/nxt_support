@@ -370,6 +370,18 @@ NxtSupport::Iban.normalize('de89 3704 0044 0532 0130 00') # => "DE89370400440532
 NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00').normalize # => "DE89370400440532013000"
 ```
 
+`#to_s`, `#country_code` and `#last4` all read from the normalized form, so they give the same answer no matter how
+the IBAN was written. `#to_s` returns an empty string for a missing IBAN, while `#country_code` and `#last4` return
+`nil` rather than an empty string.
+
+```ruby
+iban = NxtSupport::Iban.new(iban: 'de89 3704 0044 0532 0130 00')
+
+iban.to_s          # => "DE89370400440532013000"
+iban.country_code  # => "DE"
+iban.last4         # => "3000"
+```
+
 ### NxtSupport::Console.rake_cli_options
 A simple utility that uses Ruby's [OptionParser](https://docs.ruby-lang.org/en/2.1.0/OptionParser.html)
 to make it easier to pass CLI options to Rake tasks.
