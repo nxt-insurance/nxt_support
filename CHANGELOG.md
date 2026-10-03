@@ -1,3 +1,8 @@
+# v0.8.0 2026-09-16
+- Added `NxtSupport::EncryptedJsonAttrs`, `NxtSupport::IndifferentJsonType` and `NxtSupport::EncryptedJsonPathsType`
+- Added `jsonpath` as a runtime dependency
+- Added `NxtSupport::RSpec::Encryption` with `raw_column_value`, `be_encrypted` and `be_encrypted_at` for specs, opt in via `require 'nxt_support/rspec'`
+
 # v0.7.0 2026-09-16
 - Added `NxtSupport::Iban`
 
