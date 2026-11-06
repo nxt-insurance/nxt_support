@@ -1,9 +1,10 @@
 PATH
   remote: .
   specs:
-    nxt_support (0.7.0)
+    nxt_support (0.8.0)
       activerecord
       activesupport
+      jsonpath
       nxt_init
       nxt_registry
 
@@ -40,12 +41,15 @@ GEM
       concurrent-ruby (~> 1.0)
     io-console (0.8.2)
     json (2.21.1)
+    jsonpath (1.1.5)
+      multi_json
     logger (1.7.0)
     method_source (1.1.0)
     mini_portile2 (2.8.9)
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
+    multi_json (1.21.2)
     nxt_init (0.1.5)
       activesupport
     nxt_registry (0.3.10)
