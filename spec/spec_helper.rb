@@ -2,6 +2,7 @@ require 'base64'
 require 'bundler/setup'
 require 'pry'
 require 'nxt_support'
+require 'nxt_support/rspec'
 require 'active_record'
 require 'active_support/testing/time_helpers'
 
@@ -10,7 +11,17 @@ ActiveRecord::Base.establish_connection(
   database: ':memory:'
 )
 
+ActiveRecord::Encryption.configure(
+  primary_key: 'nxt-support-primary-key',
+  deterministic_key: 'nxt-support-deterministic-key',
+  key_derivation_salt: 'nxt-support-key-derivation-salt',
+  hash_digest_class: OpenSSL::Digest::SHA256,
+  support_sha1_for_non_deterministic_encryption: false
+)
+
 RSpec.configure do |config|
+  config.include NxtSupport::RSpec::Encryption
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
